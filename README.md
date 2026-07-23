@@ -1,20 +1,40 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
-</div>
+# ☕ Perkly for Cafes
 
-# Run and deploy your AI Studio app
+A multi-tenant loyalty and engagement app for cafes. Built with React, TypeScript, Firebase, and Vite.
 
-This contains everything you need to run your app locally.
+## 🚀 Features
 
-View your app in AI Studio: https://ai.studio/apps/26bcefcd-a6c8-45a6-9664-67cdcd386dfe
+### Customer App
+- 🔐 **Authentication** — Email/Password + Google Sign-In
+- 📱 **QR Check-in** — Scan QR to earn points and track visits
+- 🎯 **Loyalty Program** — Earn points with every visit
+- 🏆 **Rewards** — Redeem points for free items (coffee, pastries, etc.)
+- 👑 **Pass Levels** — Bronze → Silver → Gold (higher pass = better perks)
+- 📍 **Cafe Info** — Get directions, rate the cafe, call directly
+- 🔔 **Push Notifications** — Stay engaged with automated notifications
 
-## Run Locally
+### Cafe Owner Dashboard (Coming Soon)
+- 📊 **Analytics** — Track visits, points, and customer retention
+- 👥 **Member Management** — View and manage customers
+- 🎨 **Branding** — Customize logo, hero image, welcome message
+- 📱 **QR Code Generator** — Generate unique QR codes for your cafe
 
-**Prerequisites:**  Node.js
+### Multi-Tenant Architecture
+- One codebase, unlimited cafes
+- Each cafe gets its own branded experience
+- URL-based routing: `perkly.vercel.app/{cafeSlug}`
+- All data isolated per cafe in Firestore
 
+## 🛠️ Tech Stack
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+| Technology | Purpose |
+|------------|---------|
+| React 19 | UI Framework |
+| TypeScript | Type Safety |
+| Vite | Build Tool |
+| Firebase Auth | Authentication |
+| Firestore | Database |
+| Tailwind CSS | Styling |
+| Lucide Icons | Icons |
+| Motion | Animations |
+| Vercel | Hosting |
