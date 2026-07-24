@@ -7,6 +7,9 @@
     
     <!-- ✅ STATIC MANIFEST (fallback) -->
     <link rel="manifest" href="/manifest.json" />
+    <!-- This is replaced per cafe below for iOS home-screen shortcuts. -->
+    <link rel="apple-touch-icon" href="/icon-192x192.png" />
+    <meta name="theme-color" content="#F27D26" />
     
     <title>Perkly Cafe</title>
     
@@ -80,6 +83,21 @@
           newLink.href = manifestUrl;
           document.head.appendChild(newLink);
         }
+
+        // iOS does not use the web app manifest for its home-screen icon.
+        // Replace the fallback apple-touch-icon before the app starts instead.
+        const appleTouchIcon = document.querySelector("link[rel='apple-touch-icon']");
+        if (appleTouchIcon) {
+          appleTouchIcon.href = cafe.icon;
+        } else {
+          const newAppleTouchIcon = document.createElement('link');
+          newAppleTouchIcon.rel = 'apple-touch-icon';
+          newAppleTouchIcon.href = cafe.icon;
+          document.head.appendChild(newAppleTouchIcon);
+        }
+
+        const themeColor = document.querySelector("meta[name='theme-color']");
+        if (themeColor) themeColor.content = cafe.theme_color;
       })();
     </script>
   </head>
