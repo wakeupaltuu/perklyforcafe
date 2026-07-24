@@ -1,9 +1,33 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import { db, auth } from '@/lib/firebase';
 import { doc, getDoc, collection, getDocs, onSnapshot, setDoc, updateDoc } from 'firebase/firestore';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { Cafe, Reward, Tier, UserProfile } from '@/types';
+
+const MAIN_DOMAIN = 'cafeperkly.space';
+
+export const isLocalHost = (hostname = window.location.hostname) =>
+  hostname === 'localhost' || hostname.startsWith('127.');
+
+export const getCafeSlugFromHost = () => {
+  if (typeof window === 'undefined') return undefined;
+
+  const hostname = window.location.hostname.toLowerCase();
+
+  if (isLocalHost(hostname)) {
+    const match = window.location.pathname.match(/^\/([^/]+)/);
+    return match?.[1] || 'perkly';
+  }
+
+  if (hostname === MAIN_DOMAIN || hostname === `www.${MAIN_DOMAIN}`) return 'perkly';
+
+  const suffix = `.${MAIN_DOMAIN}`;
+  if (hostname.endsWith(suffix)) {
+    return hostname.slice(0, -suffix.length).split('.').at(-1) || 'perkly';
+  }
+
+  return 'perkly';
+};
 
 interface TenantContextType {
   cafeSlug: string | undefined;
@@ -30,7 +54,7 @@ const TenantContext = createContext<TenantContextType>({
 });
 
 export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
-  const { cafeSlug } = useParams<{ cafeSlug: string }>();
+  const cafeSlug = getCafeSlugFromHost();
   const [cafe, setCafe] = useState<Cafe | null>(null);
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [tiers, setTiers] = useState<Tier[]>([]);

@@ -19,7 +19,7 @@ export function BrewPassCard() {
 
   return (
     <div className="px-5 pt-6 sm:px-6">
-      <Link to={`/${cafe?.id || 'perkly'}/pass`} className="block active:scale-[0.98] transition-transform">
+      <Link to="/pass" className="block active:scale-[0.98] transition-transform">
         <div className="relative bg-[linear-gradient(140deg,#513527,#2e1c15)] shadow-[var(--shadow-float)] rounded-[var(--radius-card)] p-6 overflow-hidden border border-white/10">
           <div className="size-40 rounded-full bg-white/5 absolute -right-8 -top-10" />
           <div className="size-24 rounded-full bg-white/5 absolute right-10 bottom-2" />

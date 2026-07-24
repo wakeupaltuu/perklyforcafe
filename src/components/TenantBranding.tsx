@@ -22,7 +22,13 @@ export function TenantBranding() {
     }
 
     appleTitle.content = cafeName;
-  }, [cafe?.cafeName]);
+
+    const themeColor = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    if (themeColor && cafe?.primaryColor) themeColor.content = cafe.primaryColor;
+
+    const appleIcon = document.querySelector<HTMLLinkElement>('link[rel="apple-touch-icon"]');
+    if (appleIcon && cafe?.logoUrl) appleIcon.href = cafe.logoUrl;
+  }, [cafe?.cafeName, cafe?.logoUrl, cafe?.primaryColor]);
 
   return null;
 }

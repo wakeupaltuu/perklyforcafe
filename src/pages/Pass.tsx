@@ -302,7 +302,7 @@ export function Pass() {
         </div>
 
         <button 
-          onClick={() => navigate(`/${cafe?.id || 'perkly'}/scan`)}
+          onClick={() => navigate('/scan')}
           className="type-button mt-6 bg-[#2d1c0c] shadow-[0_8px_20px_-6px_rgba(45,28,12,0.6)] rounded-full text-white w-full h-14 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
         >
           <QrCode className="size-5" />

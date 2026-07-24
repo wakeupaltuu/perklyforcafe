@@ -28,7 +28,7 @@ export function HeroBanner() {
             Start your day the {cafe?.cafeName || 'Perkly'} way
           </h2>
           <button 
-            onClick={() => navigate(`/${cafe?.id || 'perkly'}/scan`)}
+            onClick={() => navigate('/scan')}
             className="type-button bg-caramel shadow-[0_6px_16px_-4px_rgba(60,30,10,.65)] rounded-full text-white mt-1 px-5 py-2.5 w-fit active:scale-95 transition-transform"
           >
             Check in now

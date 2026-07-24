@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { optimizeImageUrl } from '@/lib/utils';
 
 export function Login() {
-  const { cafe, user } = useTenant();
+  const { cafe, cafeSlug, user } = useTenant();
   const [isLoading, setIsLoading] = useState(false);
   const [mode, setMode] = useState<'login' | 'signup' | 'forgot'>('login');
   const [email, setEmail] = useState('');
@@ -21,7 +21,7 @@ export function Login() {
 
   useEffect(() => {
     if (user) {
-      navigate(`/${cafe?.id || 'perkly'}`, { replace: true });
+      navigate('/', { replace: true });
     }
   }, [user, navigate, cafe]);
 
@@ -43,7 +43,7 @@ export function Login() {
         
         // Ensure user document exists with the correct name immediately
         if (db) {
-          const userRef = doc(db, `users_${cafe?.id || 'perkly'}`, userCred.user.uid);
+          const userRef = doc(db, `users_${cafeSlug || 'perkly'}`, userCred.user.uid);
           const userSnap = await getDoc(userRef);
           if (!userSnap.exists()) {
             await setDoc(userRef, {

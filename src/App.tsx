@@ -14,7 +14,7 @@ import { Login } from '@/pages/Login';
 import { Locations } from '@/pages/Locations';
 import { isFirebaseConfigured } from '@/lib/firebase';
 import React, { useEffect } from 'react';
-import { TenantProvider, useTenant } from '@/context/TenantContext';
+import { getCafeSlugFromHost, isLocalHost, TenantProvider, useTenant } from '@/context/TenantContext';
 import { TenantBranding } from '@/components/TenantBranding';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -25,7 +25,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
   
   if (!user) {
-    return <Navigate to="login" replace />;
+    return <Navigate to="/login" replace />;
   }
   return <>{children}</>;
 }
@@ -40,7 +40,7 @@ function CafeNotFound() {
       <h1 className="type-page-title text-coffee-800 mb-3">Cafe Not Found</h1>
       <p className="type-body text-coffee-600 mb-8 max-w-xs">{error}</p>
       <a 
-        href="/perkly" 
+        href="/"
         className="type-button bg-coffee-700 text-white px-8 py-3 rounded-full shadow-sm hover:bg-coffee-800 transition-colors"
       >
         Return Home
@@ -64,7 +64,7 @@ function TenantAppContent() {
     <div className="max-w-md mx-auto min-h-screen relative bg-canvas shadow-2xl overflow-hidden">
       <TenantBranding />
       <Routes>
-        <Route path="login" element={<Login />} />
+        <Route path="/login" element={<Login />} />
         
         <Route path="/" element={
           <ProtectedRoute>
@@ -99,12 +99,13 @@ export default function App() {
     }
   }, []);
 
+  const localBasename = typeof window !== 'undefined' && isLocalHost()
+    ? `/${getCafeSlugFromHost()}`
+    : undefined;
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Navigate to="/perkly" replace />} />
-        <Route path="/:cafeSlug/*" element={<TenantApp />} />
-      </Routes>
+    <BrowserRouter basename={localBasename}>
+      <TenantApp />
     </BrowserRouter>
   );
 }

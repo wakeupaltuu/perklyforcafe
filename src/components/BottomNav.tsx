@@ -1,16 +1,12 @@
 import { Home, Gift, User, MapPin, Coffee } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
-import { useTenant } from '@/context/TenantContext';
 
 export function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { cafe } = useTenant();
-
-  const cafeId = cafe?.id || 'perkly'; // ✅ Fallback value
-
-  const navItems = [
+  const navItems: Array<{ icon: LucideIcon; label: string; path: string } | { type: 'spacer' }> = [
     { icon: Home, label: 'Home', path: '' },
     { icon: Gift, label: 'Rewards', path: 'rewards' },
     { type: 'spacer' as const }, // Space for center button
@@ -22,9 +18,9 @@ export function BottomNav() {
     <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-5">
       <div className="relative max-w-md mx-auto">
         {/* Floating Center Button */}
-        <div className="left-1/2 z-10 -translate-x-1/2 absolute -top-7">
+          <div className="left-1/2 z-10 -translate-x-1/2 absolute -top-7">
           <button 
-            onClick={() => navigate(`/${cafeId}/scan`)}
+            onClick={() => navigate(`/scan`)}
             className="size-16 bg-[linear-gradient(140deg,#9d5126,#d77b39)] ring-4 ring-[#FDF8F3] shadow-[0_10px_24px_-6px_rgba(125,67,28,.6)] rounded-full flex justify-center items-center active:scale-95 transition-transform"
           >
             <Coffee className="size-7 stroke-[1.5] text-white" />
@@ -34,20 +30,20 @@ export function BottomNav() {
         {/* Navigation Bar */}
         <div className="shadow-[0_-6px_24px_-10px_rgba(80,50,20,0.2)] rounded-[24px] bg-white/95 backdrop-blur-xl border border-neutral-200 flex mb-4 px-5 pt-3 pb-4 justify-between items-end">
           {navItems.map((item, i) => {
-            if (item.type === 'spacer') {
+            if ('type' in item) {
               return <div key={`spacer-${i}`} className="w-14" />;
             }
 
-            const isActive = item.path === '' 
-              ? location.pathname === `/${cafeId}` || location.pathname === `/${cafeId}/`
+            const isActive = item.path === ''
+              ? location.pathname === '/' || location.pathname === '' || location.pathname === '/'
               : location.pathname.endsWith(item.path);
             const Icon = item.icon!;
 
             return (
               <NavLink
                 key={item.path}
-                to={`/${cafeId}/${item.path}`}
-                className={({ isActive: navIsActive }) => 
+                to={item.path ? `/${item.path}` : `/`}
+                className={() =>
                   `flex flex-col items-center gap-1 w-12 active:scale-95 transition-transform`
                 }
               >
