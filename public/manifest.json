@@ -1,6 +1,6 @@
 {
-  "name": "Perkly Cafe",
-  "short_name": "Perkly Cafe",
+  "name": "Cafe",
+  "short_name": "Cafe",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#FDF8F3",

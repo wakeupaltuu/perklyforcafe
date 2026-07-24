@@ -1,4 +1,4 @@
-const CACHE_NAME = 'perkly-cafe-v1';
+const CACHE_NAME = 'cafe-branding-v2';
 const urlsToCache = ['/', '/index.html', '/manifest.json'];
 
 self.addEventListener('install', (event) => {
