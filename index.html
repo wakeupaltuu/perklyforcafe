@@ -3,14 +3,88 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>perkly
-    </title>
-    <link rel="preconnect" href="https://firebasestorage.googleapis.com" />
-    <link rel="dns-prefetch" href="https://firebasestorage.googleapis.com" />
+    <link rel="icon" href="/favicon.ico" />
+    
+    <!-- ✅ STATIC MANIFEST (fallback) -->
+    <link rel="manifest" href="/manifest.json" />
+    
+    <title>Perkly Cafe</title>
+    
+    <!-- ✅ DYNAMIC MANIFEST OVERRIDE (per-cafe branding) -->
+    <script>
+      (function() {
+        // Hardcoded cafe configurations
+        const CAFES = {
+          'perkly': {
+            name: 'Perkly Cafe',
+            short_name: 'Perkly Cafe',
+            theme_color: '#F27D26',
+            icon: 'https://firebasestorage.googleapis.com/v0/b/perklycafe.firebasestorage.app/o/Gemini_Generated_Image_680w3p680w3p680w.png?alt=media&token=5df9c8ad-2908-4050-a637-fdcbdb2d52b6            '
+          },
+          'coffeehouse': {
+            name: 'Coffee House',
+            short_name: 'Coffee House',
+            theme_color: '#6F4E37',
+            icon: 'https://firebasestorage.googleapis.com/v0/b/perklycafe.firebasestorage.app/o/Taza%20de%20caf%C3%A9%20Logo%20Template%20_%20Vector%20Premium.jpg?alt=media&token=d4d9037e-2e4b-47df-9a94-1bf997c7cbcc'
+          },
+          'bluebottle': {
+            name: 'Blue Bottle',
+            short_name: 'Blue Bottle',
+            theme_color: '#005A8A',
+            icon: 'https://firebasestorage.googleapis.com/v0/b/perklycafe.firebasestorage.app/o/bluebottle-logo.png?alt=media&token=YOUR_TOKEN'
+          }
+        };
+
+        // Get cafe slug from URL
+        const path = window.location.pathname;
+        const match = path.match(/^\/([^\/]+)/);
+        const cafeSlug = match ? match[1] : 'perkly';
+
+        // Get cafe config or default
+        const cafe = CAFES[cafeSlug] || CAFES['perkly'];
+
+        // Create manifest
+        const manifest = {
+          name: cafe.name,
+          short_name: cafe.short_name,
+          start_url: `/${cafeSlug}/`,
+          display: 'standalone',
+          background_color: '#FDF8F3',
+          theme_color: cafe.theme_color,
+          icons: [
+            {
+              src: cafe.icon,
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'any maskable'
+            },
+            {
+              src: cafe.icon,
+              sizes: '192x192',
+              type: 'image/png',
+              purpose: 'any'
+            }
+          ]
+        };
+
+        // Override the manifest
+        const blob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+        const manifestUrl = URL.createObjectURL(blob);
+
+        const link = document.querySelector("link[rel='manifest']");
+        if (link) {
+          link.href = manifestUrl;
+        } else {
+          const newLink = document.createElement('link');
+          newLink.rel = 'manifest';
+          newLink.href = manifestUrl;
+          document.head.appendChild(newLink);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-
