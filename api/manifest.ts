@@ -1,5 +1,5 @@
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { adminDb } from './firebaseAdmin';
+import { adminDb } from './firebaseAdmin.js';
 
 const MAIN_DOMAIN = 'cafeperkly.space';
 
@@ -14,6 +14,7 @@ export default async function handler(
 
     if (
       host !== MAIN_DOMAIN &&
+      
       host !== `www.${MAIN_DOMAIN}` &&
       host.endsWith(`.${MAIN_DOMAIN}`)
     ) {
