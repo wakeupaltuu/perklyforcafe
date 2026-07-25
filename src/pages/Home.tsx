@@ -29,11 +29,11 @@ export function Home() {
   const currentDate = format(new Date(), 'EEEE, MMMM d');
 
   return (
-    <div className="app-page flex w-full flex-col overflow-x-hidden pb-32 bg-coffee-50 min-h-screen p-4">
+    <div className="app-page flex w-full flex-col overflow-x-hidden pb-32 bg-coffee-50 min-h-screen">
       <div className="overflow-y-auto flex-1">
         
-        {/* Header */}
-        <div className="flex px-5 pt-10 pb-5 sm:px-6 justify-between items-start">
+        {/* Header — slightly more breathing room on top */}
+        <div className="flex px-4 pt-10 pb-4 justify-between items-start">
           <div className="flex flex-col gap-1">
             <span className="type-eyebrow text-muted tracking-[0.12em]">
               {currentDate}
@@ -50,15 +50,16 @@ export function Home() {
           </button>
         </div>
 
-        {/* Hero Section */}
+        {/* Hero Section — full width */}
         <HeroBanner />
 
-        {/* Perk Pass Section */}
+        {/* Brew Pass — full width */}
         <BrewPassCard />
 
-        {/* Discovery content split into individual cards for breathing room */}
-        <div className="mt-6 space-y-4 px-1 sm:px-2">
-          {/* Today's Special Card */}
+        {/* Discovery content — cards with consistent padding */}
+        <div className="mt-6 space-y-5 px-4">
+          
+          {/* Today's Special */}
           <div className="bg-white rounded-2xl p-4 shadow-sm">
             <SectionHeader title="Today's Special" action="See all" />
             <div className="mt-3">
@@ -69,7 +70,7 @@ export function Home() {
           {/* Seasonal Collection */}
           <div className="bg-white rounded-2xl p-4 shadow-sm">
             <SectionHeader title="Seasonal Collection" action="See all" />
-            <div className="grid grid-cols-2 mt-4 gap-3">
+            <div className="grid grid-cols-2 gap-3 mt-4">
               <SeasonalCard 
                 title="Autumn Spice"
                 description="Warm & cozy"
@@ -88,7 +89,7 @@ export function Home() {
           {/* Featured Drinks */}
           <div className="bg-white rounded-2xl p-4 shadow-sm">
             <SectionHeader title="Featured Drinks" action="See all" />
-            <div className="grid grid-cols-2 mt-4 gap-3">
+            <div className="grid grid-cols-2 gap-3 mt-4">
               <FeaturedDrinkCard 
                 title="Dark Mocha"
                 price="$5.20"
