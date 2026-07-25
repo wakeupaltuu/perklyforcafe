@@ -1,8 +1,6 @@
 import { useState } from 'react';
 import { 
   Coffee, 
-  QrCode, 
-  RotateCw, 
   Star, 
   Gift, 
   Sparkles, 
@@ -13,6 +11,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useTenant } from '@/context/TenantContext';
 import { cn } from '@/lib/utils';
+import BorderGlow from '@/components/BorderGlow';
 
 export function Pass() {
   const navigate = useNavigate();
@@ -25,7 +24,7 @@ export function Pass() {
   let levelVisits = visits;
   if (visits >= 10) {
     currentLevel = 'gold';
-    levelVisits = 6; // Maxed out visual
+    levelVisits = 6;
   } else if (visits >= 5) {
     currentLevel = 'silver';
     levelVisits = visits - 5;
@@ -35,16 +34,23 @@ export function Pass() {
   }
 
   const [activeTab, setActiveTab] = useState(currentLevel);
-  const [showQR, setShowQR] = useState(false);
 
   const userName = profile?.name || user?.displayName || 'Coffee Lover';
   const userId = user?.uid?.substring(0, 8).toUpperCase() || '48210093';
+
+  // Glow colors per tier
+ // Glow colors per tier — more visible
+const glowColors = {
+  bronze: ['#F59E0B', '#D97706', '#B45309'],  // Amber/Orange
+  silver: ['#94A3B8', '#CBD5E1', '#64748B'],  // Silver
+  gold: ['#FCD34D', '#F59E0B', '#D97706']      // Gold
+};
 
   // Config for each tier
   const tiers = {
     bronze: {
       name: 'Bronze',
-      bgClass: 'bg-[oklch(0.24_0.04_48)]',
+      bgClass: 'bg-[#2F221B]',
       gradient: 'bg-[linear-gradient(135deg,oklch(0.3_0.05_50/0.9),oklch(0.2_0.03_45/0.95))]',
       accentColor: 'text-[oklch(0.82_0.09_65)]',
       accentFill: 'fill-[oklch(0.82_0.09_65)]',
@@ -58,7 +64,7 @@ export function Pass() {
     },
     silver: {
       name: 'Silver',
-      bgClass: 'bg-slate-700',
+      bgClass: 'bg-[#1E293B]',
       gradient: 'bg-[linear-gradient(135deg,rgb(71,85,105,0.9),rgb(51,65,85,0.95))]',
       accentColor: 'text-slate-300',
       accentFill: 'fill-slate-300',
@@ -72,7 +78,7 @@ export function Pass() {
     },
     gold: {
       name: 'Gold',
-      bgClass: 'bg-amber-700',
+      bgClass: 'bg-[#451A03]',
       gradient: 'bg-[linear-gradient(135deg,rgb(180,83,9,0.9),rgb(146,64,14,0.95))]',
       accentColor: 'text-amber-200',
       accentFill: 'fill-amber-200',
@@ -87,10 +93,7 @@ export function Pass() {
   };
 
   const activeTierConfig = tiers[activeTab as keyof typeof tiers];
-  const isCurrentTier = activeTab === currentLevel;
   
-  // If viewing a higher/lower tier, show 0 or max cups respectively. 
-  // Simplified logic: just show 0 if not current tier, unless they surpassed it.
   const getDisplayVisits = () => {
     if (currentLevel === 'gold') {
       return activeTab === 'gold' ? 6 : 6; 
@@ -100,14 +103,12 @@ export function Pass() {
       if (activeTab === 'silver') return levelVisits;
       return 0;
     }
-    // Bronze
     if (activeTab === 'bronze') return levelVisits;
     return 0;
   };
   
   const displayVisits = getDisplayVisits();
   
-  // Calculate stats based on actual visits
   const points = visits * 124;
   const freeDrinks = Math.floor(visits / 6);
   const nextReward = Math.max(0, 200 - (points % 200));
@@ -138,10 +139,7 @@ export function Pass() {
             return (
               <button
                 key={key}
-                onClick={() => {
-                  setActiveTab(key);
-                  setShowQR(false);
-                }}
+                onClick={() => setActiveTab(key)}
                 className={cn(
                   "type-small rounded-full transition-all duration-300 relative z-10",
                   isActive ? "text-[oklch(0.28_0.05_50)] shadow-sm bg-white" : "text-neutral-500 hover:text-neutral-700"
@@ -153,27 +151,33 @@ export function Pass() {
           })}
         </div>
 
-        {/* Card */}
-        <div 
-          onClick={() => setShowQR(!showQR)}
-          className={cn(
-            "relative shadow-[0_20px_50px_-15px_rgba(80,50,20,0.5)] rounded-3xl w-full h-56 overflow-hidden cursor-pointer transition-all duration-500",
-            activeTierConfig.bgClass
-          )}
-          style={{ transformStyle: 'preserve-3d', transform: showQR ? 'rotateY(180deg)' : 'rotateY(0deg)' }}
+        {/* BorderGlow Card - Rounder corners */}
+        <BorderGlow
+          edgeSensitivity={30}
+          glowColor="40 80 80"
+          backgroundColor={activeTierConfig.bgClass.replace('bg-', '') || '#2F221B'}
+          borderRadius={32}
+          glowRadius={40}
+          glowIntensity={2}
+          coneSpread={25}
+          animated={false}
+           tapGlow={true}  // ✅ Enables tap glow on mobile
+          colors={glowColors[activeTab as keyof typeof glowColors]}
         >
-          {/* Background image & gradients */}
-          <div className="absolute inset-0" style={{ backfaceVisibility: 'hidden' }}>
-            <img
-              src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400"
-              alt="Texture"
-              className="object-cover opacity-20 absolute inset-0 w-full h-full mix-blend-overlay"
-            />
-            <div className={cn("absolute inset-0", activeTierConfig.gradient)} />
-            <div className="bg-[radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.1),transparent_50%)] absolute inset-0" />
+          <div className="relative w-full rounded-[32px] overflow-hidden">
+            {/* Background & Gradient */}
+            <div className="absolute inset-0">
+              <img
+                src="https://images.unsplash.com/photo-1447933601403-0c6688de566e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400"
+                alt="Texture"
+                className="object-cover opacity-20 absolute inset-0 w-full h-full mix-blend-overlay"
+              />
+              <div className={cn("absolute inset-0", activeTierConfig.gradient)} />
+              <div className="bg-[radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.1),transparent_50%)] absolute inset-0" />
+            </div>
             
-            {/* Front Content */}
-            <div className="relative z-10 flex p-6 flex-col justify-between h-full">
+            {/* Content */}
+            <div className="relative z-10 flex p-6 flex-col justify-between h-56">
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-2">
                   <div className={cn("size-9 rounded-full flex justify-center items-center bg-white/10 backdrop-blur-sm border border-white/20")}>
@@ -218,35 +222,10 @@ export function Pass() {
                     ID · {userId}
                   </span>
                 </div>
-                <QrCode className={cn("size-8 opacity-80", activeTierConfig.accentColor)} />
               </div>
             </div>
           </div>
-
-          {/* Back Content (QR Code) */}
-          <div 
-            className="absolute inset-0 flex flex-col items-center justify-center bg-white"
-            style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
-          >
-             <div className="size-32 bg-white rounded-2xl flex justify-center items-center shadow-inner border border-neutral-100 p-2">
-               {/* Using an image or QR component placeholder */}
-               <QrCode className={cn("size-full", activeTierConfig.emptyIcon || "text-neutral-800")} />
-             </div>
-             <span className="text-neutral-500 font-medium text-sm mt-4">
-               Scan at checkout
-             </span>
-             <span className="text-neutral-400 text-xs mt-1 font-mono">
-               {userId}
-             </span>
-          </div>
-        </div>
-
-        <div className="flex -mt-2 justify-center items-center gap-2">
-          <RotateCw className="size-3.5 text-neutral-400" />
-          <span className="text-neutral-400 text-xs leading-4">
-            Tap card to flip for QR
-          </span>
-        </div>
+        </BorderGlow>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-3 gap-3">
@@ -305,8 +284,8 @@ export function Pass() {
           onClick={() => navigate('/scan')}
           className="type-button mt-6 bg-[#2d1c0c] shadow-[0_8px_20px_-6px_rgba(45,28,12,0.6)] rounded-full text-white w-full h-14 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
         >
-          <QrCode className="size-5" />
-          Open Scanner
+          <Coffee className="size-5" />
+          Check In
         </button>
       </div>
     </div>
