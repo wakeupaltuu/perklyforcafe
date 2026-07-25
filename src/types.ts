@@ -8,6 +8,15 @@ export interface Cafe {
   heroImageUrl: string;
   welcomeMessage: string;
   pointsPerVisit: number;
+  description?: string;
+  socialImage?: string;
+  faviconUrl?: string;
+  appleIconUrl?: string;
+  icon192Url?: string;
+  icon512Url?: string;
+  fontFamily?: string;
+  accentGradient?: string;
+  backgroundPattern?: string;
 }
 
 export interface Reward {

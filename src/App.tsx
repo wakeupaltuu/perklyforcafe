@@ -15,7 +15,6 @@ import { Locations } from '@/pages/Locations';
 import { isFirebaseConfigured } from '@/lib/firebase';
 import React, { useEffect } from 'react';
 import { getCafeSlugFromHost, isLocalHost, TenantProvider, useTenant } from '@/context/TenantContext';
-import { TenantBranding } from '@/components/TenantBranding';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useTenant();
@@ -62,7 +61,6 @@ function TenantAppContent() {
 
   return (
     <div className="max-w-md mx-auto min-h-screen relative bg-canvas shadow-2xl overflow-hidden">
-      <TenantBranding />
       <Routes>
         <Route path="/login" element={<Login />} />
         

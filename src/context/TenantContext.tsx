@@ -3,6 +3,7 @@ import { db, auth } from '@/lib/firebase';
 import { doc, getDoc, collection, getDocs, onSnapshot, setDoc, updateDoc } from 'firebase/firestore';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { Cafe, Reward, Tier, UserProfile } from '@/types';
+import { applyBranding } from '@/lib/branding';
 
 const MAIN_DOMAIN = 'cafeperkly.space';
 
@@ -151,6 +152,7 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
     if (cafe) {
       document.documentElement.style.setProperty('--color-accent', cafe.primaryColor);
       document.documentElement.style.setProperty('--color-coffee-700', cafe.secondaryColor);
+      applyBranding(cafe);
     }
   }, [cafe]);
 
