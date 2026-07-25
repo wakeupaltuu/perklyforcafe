@@ -29,7 +29,7 @@ export function Home() {
   const currentDate = format(new Date(), 'EEEE, MMMM d');
 
   return (
-    <div className="app-page flex w-full flex-col overflow-x-hidden pb-32">
+    <div className="app-page flex w-full flex-col overflow-x-hidden pb-32 bg-coffee-50 min-h-screen p-4">
       <div className="overflow-y-auto flex-1">
         
         {/* Header */}
@@ -56,16 +56,18 @@ export function Home() {
         {/* Perk Pass Section */}
         <BrewPassCard />
 
-        {/* Discovery content is grouped in an elevated, editorial surface. */}
-        <div className="mx-5 mt-9 rounded-[28px] border border-line bg-surface p-4 shadow-[var(--shadow-card)] sm:mx-6 sm:p-5">
-          {/* Today's Special */}
-          <section>
+        {/* Discovery content split into individual cards for breathing room */}
+        <div className="mt-6 space-y-4 px-1 sm:px-2">
+          {/* Today's Special Card */}
+          <div className="bg-white rounded-2xl p-4 shadow-sm">
             <SectionHeader title="Today's Special" action="See all" />
-            <TodaysSpecialCard />
-          </section>
+            <div className="mt-3">
+              <TodaysSpecialCard />
+            </div>
+          </div>
 
-          {/* Seasonal Collection replaces the reference's events placement. */}
-          <section className="pt-8">
+          {/* Seasonal Collection */}
+          <div className="bg-white rounded-2xl p-4 shadow-sm">
             <SectionHeader title="Seasonal Collection" action="See all" />
             <div className="grid grid-cols-2 mt-4 gap-3">
               <SeasonalCard 
@@ -81,10 +83,10 @@ export function Home() {
                 overlayColor="bg-[#1e2837]/78"
               />
             </div>
-          </section>
+          </div>
 
-          {/* Featured drinks occupy the final discovery row. */}
-          <section className="pt-8">
+          {/* Featured Drinks */}
+          <div className="bg-white rounded-2xl p-4 shadow-sm">
             <SectionHeader title="Featured Drinks" action="See all" />
             <div className="grid grid-cols-2 mt-4 gap-3">
               <FeaturedDrinkCard 
@@ -99,7 +101,7 @@ export function Home() {
                 imageUrl="https://images.unsplash.com/photo-1781229816087-3e3d8ec90f62?auto=format&fit=crop&q=80&w=400"
               />
             </div>
-          </section>
+          </div>
         </div>
         
         <div className="h-6" />

@@ -1,13 +1,30 @@
-export function SectionHeader({ title, action }: { title: string, action?: string }) {
+interface SectionHeaderProps {
+  title: string;
+  action?: string;
+}
+
+export function SectionHeader({
+  title,
+  action,
+}: SectionHeaderProps) {
   return (
-    <div className="flex justify-between items-center">
-      <h3 className="type-section-title text-ink">
+    <div className="mb-4 flex items-center justify-between">
+      <h2 className="font-sans text-[22px] font-semibold leading-tight tracking-[-0.03em] text-coffee-900">
         {title}
-      </h3>
+      </h2>
+
       {action && (
-        <span className="type-caption text-caramel cursor-pointer hover:underline">
+        <button
+          className="
+            text-[14px]
+            font-medium
+            text-caramel
+            transition-colors
+            hover:text-coffee-900
+          "
+        >
           {action}
-        </span>
+        </button>
       )}
     </div>
   );

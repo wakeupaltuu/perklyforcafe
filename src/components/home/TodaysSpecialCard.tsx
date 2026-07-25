@@ -7,8 +7,7 @@ export function TodaysSpecialCard() {
     'https://firebasestorage.googleapis.com/v0/b/perklycafe.firebasestorage.app/o/Gemini_Generated_Image_jy1n0njy1n0njy1n.png?alt=media&token=1bba3ace-2ebe-4e27-85de-ee9d4022ee69'
 
   return (
-    <div className="px-4 pt-2">
-
+    <>
       {/* Card — the image fills the whole container, text sits on top of the right side */}
       <div
         className="relative rounded-2xl overflow-hidden w-full shadow-sm bg-[#EFE0CC]"
@@ -45,6 +44,6 @@ export function TodaysSpecialCard() {
           </button>
         </div>
       </div>
-    </div>
+    </>
   )
 }
