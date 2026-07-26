@@ -11,7 +11,7 @@ export function TodaysSpecialCard() {
       {/* Card — the image fills the whole container, text sits on top of the right side */}
       <div
         className="relative rounded-2xl overflow-hidden w-full shadow-sm bg-[#EFE0CC]"
-        style={{ aspectRatio: '800 / 320' }}
+        style={{ aspectRatio: '800 / 444' }}
       >
         {/* Full-bleed background image */}
         <img
