@@ -1,3 +1,5 @@
+//this is rewards.tsx 
+
 import { useState } from 'react';
 import { Coffee } from 'lucide-react';
 import { doc, updateDoc, arrayUnion, increment } from 'firebase/firestore';

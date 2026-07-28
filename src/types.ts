@@ -1,3 +1,13 @@
+//this is types.ts, which defines the TypeScript interfaces for the Cafe, Reward, Tier, UserProfile, Visit, and EarnedReward data structures used in the application. These interfaces provide type safety and structure for the data being managed and manipulated throughout the app, ensuring consistency and clarity in how data is represented and accessed.
+
+export interface HeroSlide {
+  imageUrl: string;
+  eyebrow?: string;
+  title: string;
+  ctaText?: string;
+  ctaLink?: string;
+}
+
 export interface Cafe {
   id: string;
   cafeName: string;
@@ -10,6 +20,9 @@ export interface Cafe {
   pointsPerVisit: number;
   description?: string;
   socialImage?: string;
+  heroSlides?: HeroSlide[];
+  /** Legacy Firestore spelling retained while existing cafe documents migrate. */
+  heroSLides?: HeroSlide[];
   faviconUrl?: string;
   appleIconUrl?: string;
   icon192Url?: string;
@@ -39,6 +52,8 @@ export interface UserProfile {
   name: string;
   email: string;
   points: number;
+   lastCheckIn?: string;        // ← NEW
+  checkInHistory?: string[];  
   visits: number;
   visitsHistory: Visit[];
   rewardsEarned: EarnedReward[];

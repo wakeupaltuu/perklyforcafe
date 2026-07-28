@@ -4,7 +4,7 @@ import { HeroBanner } from '@/components/home/HeroBanner';
 import { BrewPassCard } from '@/components/home/BrewPassCard';
 import { SectionHeader } from '@/components/home/SectionHeader';
 import { TodaysSpecialCard } from '@/components/home/TodaysSpecialCard';
-import { SeasonalCard } from '@/components/home/SeasonalCard';
+import { ComboCard } from '@/components/home/ComboCard';
 import { FeaturedDrinkCard } from '@/components/home/FeaturedDrinkCard';
 import { format } from 'date-fns';
 
@@ -28,11 +28,62 @@ export function Home() {
 
   const currentDate = format(new Date(), 'EEEE, MMMM d');
 
+  const combos = [
+    {
+      title: 'Morning Combo',
+      description: 'Latte + Butter Croissant',
+      rating: 4.8,
+      price: 399,
+      originalPrice: 459,
+      imageUrl: 'https://images.unsplash.com/photo-1495474472207-464a8d4402b8?auto=format&fit=crop&q=80&w=400',
+    },
+    {
+      title: 'Sweet Break',
+      description: 'Chocolate Cake + Cold Brew',
+      rating: 4.7,
+      price: 349,
+      originalPrice: 399,
+      imageUrl: 'https://images.unsplash.com/photo-1511920170033-f839aa4c3e85?auto=format&fit=crop&q=80&w=400',
+    },
+    {
+      title: 'Lunch Combo',
+      description: 'Chicken Sandwich + Iced Tea',
+      rating: 4.6,
+      price: 449,
+      originalPrice: 499,
+      imageUrl: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=400',
+    },
+    {
+      title: 'Evening Delight',
+      description: 'Mocha + Chocolate Muffin',
+      rating: 4.5,
+      price: 379,
+      originalPrice: 429,
+      imageUrl: 'https://images.unsplash.com/photo-1572442388796-11668a67e53d?auto=format&fit=crop&q=80&w=400',
+    },
+    {
+      title: 'Vegan Combo',
+      description: 'Oat Latte + Avocado Toast',
+      rating: 4.9,
+      price: 499,
+      originalPrice: 559,
+      imageUrl: 'https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&q=80&w=400',
+    },
+    {
+      title: 'Breakfast Stack',
+      description: 'Coffee + Pancakes + Syrup',
+      rating: 4.4,
+      price: 449,
+      originalPrice: 499,
+      imageUrl: 'https://images.unsplash.com/photo-1485962398705-ef6a13c41e8f?auto=format&fit=crop&q=80&w=400',
+    },
+  ];
+
   return (
     <div className="app-page flex w-full flex-col overflow-x-hidden pb-32 bg-coffee-50 min-h-screen">
       <div className="overflow-y-auto flex-1">
         
-        {/* Header — slightly more breathing room on top */}
+        {/* Header */}
         <div className="flex px-4 pt-10 pb-4 justify-between items-start">
           <div className="flex flex-col gap-1">
             <span className="type-eyebrow text-muted tracking-[0.12em]">
@@ -50,13 +101,13 @@ export function Home() {
           </button>
         </div>
 
-        {/* Hero Section — full width */}
+        {/* Hero Section */}
         <HeroBanner />
 
-        {/* Brew Pass — full width */}
+        {/* Brew Pass */}
         <BrewPassCard />
 
-        {/* Discovery content — cards with consistent padding */}
+        {/* Discovery content */}
         <div className="mt-6 space-y-5 px-4">
           
           {/* Today's Special */}
@@ -67,28 +118,23 @@ export function Home() {
             </div>
           </div>
 
-          {/* Seasonal Collection */}
+          {/* Recommended For You — Horizontal Scroll */}
           <div className="bg-white rounded-2xl p-4 shadow-sm">
-            <SectionHeader title="Seasonal Collection" action="See all" />
-            <div className="grid grid-cols-2 gap-3 mt-4">
-              <SeasonalCard 
-                title="Autumn Spice"
-                description="Warm & cozy"
-                imageUrl="https://images.unsplash.com/photo-1632584125454-f48693ec9861?auto=format&fit=crop&q=80&w=400"
-                overlayColor="bg-[#3c230f]/78"
-              />
-              <SeasonalCard 
-                title="Cold Brew Co."
-                description="Smooth & bold"
-                imageUrl="https://images.unsplash.com/photo-1495221521568-8b714b2cb6fd?auto=format&fit=crop&q=80&w=400"
-                overlayColor="bg-[#1e2837]/78"
-              />
+            <SectionHeader title="Recommended For You" action="See all" />
+            <div className="mt-4 overflow-x-auto pb-2 scrollbar-hide">
+              <div className="flex gap-4">
+                {combos.map((combo, idx) => (
+                  <div key={idx} className="min-w-[180px] max-w-[180px]">
+                    <ComboCard {...combo} />
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Featured Drinks */}
+          {/* Popular at Perkly */}
           <div className="bg-white rounded-2xl p-4 shadow-sm">
-            <SectionHeader title="Featured Drinks" action="See all" />
+            <SectionHeader title="Popular at Perkly" action="See all" />
             <div className="grid grid-cols-2 gap-3 mt-4">
               <FeaturedDrinkCard 
                 title="Dark Mocha"

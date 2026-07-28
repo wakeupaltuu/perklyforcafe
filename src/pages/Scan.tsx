@@ -1,27 +1,45 @@
 import { useState, useEffect, useRef } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { motion, AnimatePresence } from 'motion/react';
-import { CheckCircle2, ScanLine, XCircle, Camera } from 'lucide-react';
+import { CheckCircle2, ScanLine, XCircle, Camera, AlertCircle } from 'lucide-react';
 import { useTenant } from '@/context/TenantContext';
 import { db } from '@/lib/firebase';
-import { doc, updateDoc, arrayUnion, increment } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion, increment, getDoc } from 'firebase/firestore';
 
 export function Scan() {
   const { user, profile, cafe, cafeSlug } = useTenant();
   const [isScanning, setIsScanning] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [alreadyCheckedIn, setAlreadyCheckedIn] = useState(false);
   
   const scannerRef = useRef<Html5Qrcode | null>(null);
 
+  // Check if user already checked in today
+  const hasCheckedInToday = () => {
+    if (!profile?.checkInHistory) return false;
+    const today = new Date().toISOString().split('T')[0];
+    return profile.checkInHistory.includes(today);
+  };
+
   const addVisit = async () => {
     if (user && profile && cafe && cafeSlug) {
+      // ✅ Check if already checked in today
+      if (hasCheckedInToday()) {
+        setAlreadyCheckedIn(true);
+        setErrorMsg("You've already checked in today! Come back tomorrow ☕");
+        return;
+      }
+
       try {
         const userRef = doc(db, `users_${cafeSlug}`, user.uid);
+        const today = new Date().toISOString().split('T')[0];
         
         await updateDoc(userRef, {
           points: increment(cafe.pointsPerVisit || 10),
           visits: increment(1),
+          lastCheckIn: new Date().toISOString(),
+          checkInHistory: arrayUnion(today),
           visitsHistory: arrayUnion({
             id: Date.now().toString(),
             date: new Date().toISOString(),
@@ -42,6 +60,15 @@ export function Scan() {
 
   const startScanner = async () => {
     setErrorMsg(null);
+    setAlreadyCheckedIn(false);
+    
+    // ✅ Check before starting scanner
+    if (hasCheckedInToday()) {
+      setAlreadyCheckedIn(true);
+      setErrorMsg("You've already checked in today! Come back tomorrow ☕");
+      return;
+    }
+
     try {
       const scanner = new Html5Qrcode('qr-reader');
       scannerRef.current = scanner;
@@ -83,12 +110,11 @@ export function Scan() {
   };
 
   const handleScan = async (decodedText: string) => {
-    // Expected format: {"cafe":"coffeehouse","type":"checkin"}
     try {
       const data = JSON.parse(decodedText);
       if (data.type === 'checkin' && data.cafe === cafeSlug) {
         stopScanner();
-        addVisit();
+        await addVisit();
       } else {
         stopScanner();
         setErrorMsg('Invalid QR Code for this cafe.');
@@ -107,9 +133,9 @@ export function Scan() {
     };
   }, [isScanning]);
 
-  const handleSimulateCheckIn = () => {
+  const handleSimulateCheckIn = async () => {
     if (isScanning) stopScanner();
-    addVisit();
+    await addVisit();
   };
 
   return (
@@ -130,33 +156,36 @@ export function Scan() {
                    <ScanLine className="w-9 h-9" />
                  </div>
                  <p className="type-body-lg font-medium">Center the QR code</p>
+                 {alreadyCheckedIn && (
+                   <p className="text-sm text-amber-600 mt-2 flex items-center gap-1">
+                     <AlertCircle className="w-4 h-4" />
+                     Already checked in today
+                   </p>
+                 )}
                </div>
             ) : null}
             
-            {/* Html5Qrcode injects video here */}
             <div id="qr-reader" className={`w-full h-full [&>video]:object-cover ${!isScanning ? 'hidden' : ''}`}></div>
 
-            {/* Framing remains visible before the camera is opened. */}
             <div className="absolute top-4 left-4 w-8 h-8 border-t-[3px] border-l-[3px] border-caramel rounded-tl-lg z-10" />
             <div className="absolute top-4 right-4 w-8 h-8 border-t-[3px] border-r-[3px] border-caramel rounded-tr-lg z-10" />
             <div className="absolute bottom-4 left-4 w-8 h-8 border-b-[3px] border-l-[3px] border-caramel rounded-bl-lg z-10" />
             <div className="absolute bottom-4 right-4 w-8 h-8 border-b-[3px] border-r-[3px] border-caramel rounded-br-lg z-10" />
             {isScanning && (
-              <>
-                {/* Scanning line animation */}
-                <motion.div 
-                  initial={{ top: '10%' }}
-                  animate={{ top: '90%' }}
-                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                  className="absolute left-[10%] right-[10%] h-0.5 bg-caramel shadow-[0_0_8px_rgba(184,104,49,.8)] z-10"
-                />
-              </>
+              <motion.div 
+                initial={{ top: '10%' }}
+                animate={{ top: '90%' }}
+                transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                className="absolute left-[10%] right-[10%] h-0.5 bg-caramel shadow-[0_0_8px_rgba(184,104,49,.8)] z-10"
+              />
             )}
           </div>
 
           {errorMsg && (
-            <div className="w-full bg-red-50 text-red-600 p-3 rounded-xl mb-6 text-sm flex items-start gap-2 font-medium">
-              <XCircle className="w-5 h-5 shrink-0" />
+            <div className={`w-full p-3 rounded-xl mt-4 text-sm flex items-start gap-2 font-medium ${
+              alreadyCheckedIn ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-600'
+            }`}>
+              {alreadyCheckedIn ? <AlertCircle className="w-5 h-5 shrink-0" /> : <XCircle className="w-5 h-5 shrink-0" />}
               <p>{errorMsg}</p>
             </div>
           )}
@@ -182,7 +211,6 @@ export function Scan() {
             )}
             
             <p className="type-body mt-7 text-muted">Enter code instead</p>
-            {/* Hidden manual checkin */}
             <button 
               onClick={handleSimulateCheckIn}
               className="mt-6 opacity-0 hover:opacity-100 focus:opacity-100 text-xs text-coffee-300 mx-auto block py-2 transition-opacity"
