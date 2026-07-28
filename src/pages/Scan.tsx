@@ -1,243 +1,341 @@
-import { useState, useEffect, useRef } from 'react';
-import { Html5Qrcode } from 'html5-qrcode';
-import { motion, AnimatePresence } from 'motion/react';
-import { CheckCircle2, ScanLine, XCircle, Camera, AlertCircle } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { motion } from 'motion/react';
+import { Camera, CheckCircle2, QrCode, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useTenant } from '@/context/TenantContext';
 import { db } from '@/lib/firebase';
-import { doc, updateDoc, arrayUnion, increment, getDoc } from 'firebase/firestore';
+import { doc, updateDoc, arrayUnion, increment } from 'firebase/firestore';
+import { Html5Qrcode } from 'html5-qrcode';
 
 export function Scan() {
   const { user, profile, cafe, cafeSlug } = useTenant();
-  const [isScanning, setIsScanning] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
-  const [alreadyCheckedIn, setAlreadyCheckedIn] = useState(false);
+  const navigate = useNavigate();
+  const [checkingIn, setCheckingIn] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [scanning, setScanning] = useState(false);
+  const [scanError, setScanError] = useState<string | null>(null);
   
   const scannerRef = useRef<Html5Qrcode | null>(null);
+  const scannerContainerRef = useRef<HTMLDivElement>(null);
 
-  // Check if user already checked in today
-  const hasCheckedInToday = () => {
-    if (!profile?.checkInHistory) return false;
-    const today = new Date().toISOString().split('T')[0];
-    return profile.checkInHistory.includes(today);
-  };
-
-  const addVisit = async () => {
-    if (user && profile && cafe && cafeSlug) {
-      // ✅ Check if already checked in today
-      if (hasCheckedInToday()) {
-        setAlreadyCheckedIn(true);
-        setErrorMsg("You've already checked in today! Come back tomorrow ☕");
-        return;
+  // Clean up scanner on unmount
+  useEffect(() => {
+    return () => {
+      if (scannerRef.current) {
+        try {
+          scannerRef.current.stop();
+          scannerRef.current.clear();
+        } catch (e) {
+          // Ignore
+        }
       }
-
-      try {
-        const userRef = doc(db, `users_${cafeSlug}`, user.uid);
-        const today = new Date().toISOString().split('T')[0];
-        
-        await updateDoc(userRef, {
-          points: increment(cafe.pointsPerVisit || 10),
-          visits: increment(1),
-          lastCheckIn: new Date().toISOString(),
-          checkInHistory: arrayUnion(today),
-          visitsHistory: arrayUnion({
-            id: Date.now().toString(),
-            date: new Date().toISOString(),
-            location: cafe.cafeName || 'Main Store',
-            pointsEarned: cafe.pointsPerVisit || 10
-          })
-        });
-        
-        setShowSuccess(true);
-        setTimeout(() => {
-          setShowSuccess(false);
-        }, 2500);
-      } catch (err) {
-        console.error("Check-in failed:", err);
-      }
-    }
-  };
+    };
+  }, []);
 
   const startScanner = async () => {
-    setErrorMsg(null);
-    setAlreadyCheckedIn(false);
-    
-    // ✅ Check before starting scanner
-    if (hasCheckedInToday()) {
-      setAlreadyCheckedIn(true);
-      setErrorMsg("You've already checked in today! Come back tomorrow ☕");
+    if (!scannerContainerRef.current) {
+      console.error('Scanner container not found');
+      setScanError('Scanner not initialized. Please refresh.');
       return;
     }
+    
+    setScanning(true);
+    setScanError(null);
 
     try {
-      const scanner = new Html5Qrcode('qr-reader');
-      scannerRef.current = scanner;
-      
-      setIsScanning(true);
-      
-      await scanner.start(
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const html5QrCode = new Html5Qrcode('qr-reader');
+      scannerRef.current = html5QrCode;
+
+      await html5QrCode.start(
         { facingMode: 'environment' },
-        { fps: 10, qrbox: { width: 250, height: 250 } },
-        (decodedText) => {
-          handleScan(decodedText);
+        {
+          fps: 10,
+          qrbox: { width: 280, height: 280 },
+          aspectRatio: 1.0
         },
-        (errorMessage) => {
-          // ignore stream errors, they are noisy
-        }
+        onScanSuccess,
+        onScanError
       );
+
+      console.log('Scanner started successfully');
     } catch (err: any) {
-      console.error(err);
-      setIsScanning(false);
-      setErrorMsg(err.message || 'Could not start camera');
-      if (scannerRef.current) {
-        scannerRef.current.clear();
-        scannerRef.current = null;
+      console.error('Camera error:', err);
+      
+      let errorMessage = 'Unable to access camera.';
+      if (err.message.includes('NotAllowedError')) {
+        errorMessage = 'Camera permission denied. Please allow camera access in browser settings.';
+      } else if (err.message.includes('NotFoundError')) {
+        errorMessage = 'No camera found on this device.';
+      } else if (err.message.includes('NotReadableError')) {
+        errorMessage = 'Camera is already in use by another application.';
+      } else if (err.message.includes('OverconstrainedError')) {
+        errorMessage = 'Camera not supported on this device.';
+      } else if (err.message.includes('qr-reader')) {
+        errorMessage = 'Scanner not ready. Please try again.';
+      } else {
+        errorMessage = `Camera error: ${err.message}`;
       }
+      
+      setScanError(errorMessage);
+      setScanning(false);
     }
   };
 
   const stopScanner = async () => {
-    if (scannerRef.current && isScanning) {
+    if (scannerRef.current) {
       try {
         await scannerRef.current.stop();
-        scannerRef.current.clear();
-      } catch (err) {
-        console.error("Error stopping scanner", err);
+        await scannerRef.current.clear();
+      } catch (err: any) {
+        // Ignore "scanner is not running" errors
+        if (!err.message?.includes('not running')) {
+          console.error('Error stopping scanner:', err);
+        }
       }
-      scannerRef.current = null;
-      setIsScanning(false);
     }
+    setScanning(false);
   };
 
-  const handleScan = async (decodedText: string) => {
+  const onScanSuccess = async (decodedText: string) => {
+    if (scannerRef.current) {
+      try {
+        await scannerRef.current.stop();
+        await scannerRef.current.clear();
+      } catch (e) {
+        // Ignore
+      }
+    }
+    setScanning(false);
+    setCheckingIn(true);
+
     try {
       const data = JSON.parse(decodedText);
-      if (data.type === 'checkin' && data.cafe === cafeSlug) {
-        stopScanner();
-        await addVisit();
-      } else {
-        stopScanner();
-        setErrorMsg('Invalid QR Code for this cafe.');
+      
+      if (data.type !== 'checkin') {
+        throw new Error('Invalid QR code: Not a check-in code');
       }
-    } catch (e) {
-      stopScanner();
-      setErrorMsg('Unrecognized QR format.');
+
+      if (data.cafe !== cafeSlug) {
+        throw new Error(`This QR code is for ${data.cafe}, not ${cafeSlug}`);
+      }
+
+      const today = new Date().toISOString().split('T')[0];
+      if (profile?.checkInHistory?.includes(today)) {
+        throw new Error('You have already checked in today! ☕');
+      }
+
+      setSuccess(true);
+      
+      if (user && cafeSlug) {
+        const userRef = doc(db, `users_${cafeSlug}`, user.uid);
+        await updateDoc(userRef, {
+          points: increment(cafe?.pointsPerVisit || 10),
+          visits: increment(1),
+          lastCheckIn: new Date().toISOString(),
+          checkInHistory: arrayUnion(today),
+          visitsHistory: arrayUnion({
+            id: `${today}_${Date.now()}`,
+            date: new Date().toISOString(),
+            location: cafe?.cafeName || 'Main Store',
+            pointsEarned: cafe?.pointsPerVisit || 10
+          })
+        });
+      }
+
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
+
+    } catch (err: any) {
+      console.error('Check-in error:', err);
+      setScanError(err.message || 'Invalid QR code. Please try again.');
+      setCheckingIn(false);
+      setSuccess(false);
+      setTimeout(() => {
+        startScanner();
+      }, 2000);
     }
   };
 
-  useEffect(() => {
-    return () => {
-      if (scannerRef.current && isScanning) {
-        scannerRef.current.stop().catch(console.error);
-      }
-    };
-  }, [isScanning]);
-
-  const handleSimulateCheckIn = async () => {
-    if (isScanning) stopScanner();
-    await addVisit();
+  const onScanError = (err: any) => {
+    // Ignore — this is called continuously while scanning
   };
 
+  const handleManualCheckIn = async () => {
+    setCheckingIn(true);
+    setSuccess(true);
+    
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      if (profile?.checkInHistory?.includes(today)) {
+        throw new Error('You have already checked in today! ☕');
+      }
+
+      if (user && cafeSlug) {
+        const userRef = doc(db, `users_${cafeSlug}`, user.uid);
+        await updateDoc(userRef, {
+          points: increment(cafe?.pointsPerVisit || 10),
+          visits: increment(1),
+          lastCheckIn: new Date().toISOString(),
+          checkInHistory: arrayUnion(today),
+          visitsHistory: arrayUnion({
+            id: `${today}_${Date.now()}`,
+            date: new Date().toISOString(),
+            location: cafe?.cafeName || 'Main Store',
+            pointsEarned: cafe?.pointsPerVisit || 10
+          })
+        });
+      }
+      
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
+    } catch (err: any) {
+      console.error('Manual check-in error:', err);
+      setScanError(err.message || 'Manual check-in failed.');
+      setCheckingIn(false);
+      setSuccess(false);
+    }
+  };
+
+  const navigateToHome = () => {
+    navigate('/');
+  };
+
+  if (!cafe) return null;
+
+  if (success) {
+    return (
+      <div className="p-6 h-screen flex flex-col items-center justify-center pt-12 bg-coffee-50">
+        <motion.div 
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="flex flex-col items-center gap-6 text-center"
+        >
+          <div className="w-24 h-24 bg-green-500/10 rounded-full flex items-center justify-center">
+            <CheckCircle2 size={64} className="text-green-500" />
+          </div>
+          <div>
+            <h3 className="text-3xl font-bold text-coffee-800">Checked In! ✅</h3>
+            <p className="text-coffee-500 mt-2">
+              +{cafe?.pointsPerVisit || 10} Points Earned
+            </p>
+            <p className="text-sm text-coffee-400 mt-1">
+              {profile?.visits || 0} total visits
+            </p>
+          </div>
+          <button
+            onClick={navigateToHome}
+            className="mt-6 bg-primary text-white px-8 py-3 rounded-full font-bold"
+          >
+            Continue
+          </button>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
-    <div className="app-page min-h-screen pb-32 pt-14 px-5 sm:px-6 flex flex-col items-center">
-      <div className="w-full mb-12">
-        <h1 className="type-display-xl text-ink mb-5">Check in</h1>
-        <p className="type-body-lg text-muted">Scan the café QR to collect your stamp</p>
+    <div className="p-6 h-screen flex flex-col pt-12 bg-coffee-50">
+      <div className="text-center mb-6">
+        <h1 className="text-3xl font-bold text-coffee-800 mb-2">Check-In</h1>
+        <p className="text-coffee-500">
+          {scanning ? 'Point camera at QR code' : 'Scan at the counter to earn points'}
+        </p>
       </div>
 
-      <div className="relative w-full max-w-sm">
-        <div className="rounded-[30px] bg-[radial-gradient(circle_at_50%_35%,#d7c299,#998f7d)] p-3 shadow-[0_22px_45px_-22px_rgba(77,49,26,.55)] flex flex-col items-center">
-          
-          {/* Scanner Container */}
-          <div className="w-full aspect-square bg-black/10 rounded-[23px] overflow-hidden relative flex flex-col items-center justify-center border border-white/50">
-            {!isScanning ? (
-               <div className="text-coffee-800/70 flex flex-col items-center">
-                 <div className="mb-5 flex size-20 items-center justify-center rounded-full bg-surface/80 shadow-[var(--shadow-card)]">
-                   <ScanLine className="w-9 h-9" />
-                 </div>
-                 <p className="type-body-lg font-medium">Center the QR code</p>
-                 {alreadyCheckedIn && (
-                   <p className="text-sm text-amber-600 mt-2 flex items-center gap-1">
-                     <AlertCircle className="w-4 h-4" />
-                     Already checked in today
-                   </p>
-                 )}
-               </div>
-            ) : null}
-            
-            <div id="qr-reader" className={`w-full h-full [&>video]:object-cover ${!isScanning ? 'hidden' : ''}`}></div>
+      <div className="flex-1 flex flex-col items-center justify-center max-w-sm w-full mx-auto">
+        <div 
+          ref={scannerContainerRef}
+          className="relative w-full aspect-square max-w-[280px] bg-zinc-900 rounded-[2.5rem] border-2 border-zinc-800 flex items-center justify-center overflow-hidden"
+        >
+          {scanning ? (
+            <>
+              <div id="qr-reader" className="w-full h-full" />
+              
+              <div className="absolute inset-0 pointer-events-none">
+                <div className="absolute inset-4 border-2 border-primary/40 rounded-3xl" />
+                <div className="absolute top-4 left-4 w-8 h-8 border-t-4 border-l-4 border-primary rounded-tl-xl" />
+                <div className="absolute top-4 right-4 w-8 h-8 border-t-4 border-r-4 border-primary rounded-tr-xl" />
+                <div className="absolute bottom-4 left-4 w-8 h-8 border-b-4 border-l-4 border-primary rounded-bl-xl" />
+                <div className="absolute bottom-4 right-4 w-8 h-8 border-b-4 border-r-4 border-primary rounded-br-xl" />
+                
+                <motion.div 
+                  initial={{ top: '15%' }}
+                  animate={{ top: '85%' }}
+                  transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
+                  className="absolute left-8 right-8 h-0.5 bg-primary shadow-[0_0_20px_var(--primary)]"
+                />
+              </div>
 
-            <div className="absolute top-4 left-4 w-8 h-8 border-t-[3px] border-l-[3px] border-caramel rounded-tl-lg z-10" />
-            <div className="absolute top-4 right-4 w-8 h-8 border-t-[3px] border-r-[3px] border-caramel rounded-tr-lg z-10" />
-            <div className="absolute bottom-4 left-4 w-8 h-8 border-b-[3px] border-l-[3px] border-caramel rounded-bl-lg z-10" />
-            <div className="absolute bottom-4 right-4 w-8 h-8 border-b-[3px] border-r-[3px] border-caramel rounded-br-lg z-10" />
-            {isScanning && (
-              <motion.div 
-                initial={{ top: '10%' }}
-                animate={{ top: '90%' }}
-                transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                className="absolute left-[10%] right-[10%] h-0.5 bg-caramel shadow-[0_0_8px_rgba(184,104,49,.8)] z-10"
-              />
-            )}
-          </div>
-
-          {errorMsg && (
-            <div className={`w-full p-3 rounded-xl mt-4 text-sm flex items-start gap-2 font-medium ${
-              alreadyCheckedIn ? 'bg-amber-50 text-amber-700' : 'bg-red-50 text-red-600'
-            }`}>
-              {alreadyCheckedIn ? <AlertCircle className="w-5 h-5 shrink-0" /> : <XCircle className="w-5 h-5 shrink-0" />}
-              <p>{errorMsg}</p>
+              <button
+                onClick={stopScanner}
+                className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-zinc-800 text-white p-3 rounded-full shadow-lg z-10"
+              >
+                <X size={24} />
+              </button>
+            </>
+          ) : (
+            <div className="flex flex-col items-center gap-4">
+              <QrCode size={80} className="text-zinc-700" />
+              <p className="text-zinc-500 text-sm text-center px-4">
+                Tap "Start Scanning" to check in
+              </p>
             </div>
           )}
-
         </div>
 
-        <div className="text-center w-full pt-8">
-            {!isScanning ? (
-              <button 
-                onClick={startScanner}
-                className="type-button w-full bg-neutral-900 text-white rounded-full py-5 text-base shadow-[var(--shadow-card)] active:scale-95 transition-transform flex items-center justify-center gap-2"
-              >
-                <Camera className="w-6 h-6" />
-                Open Camera
-              </button>
-            ) : (
-              <button 
-                onClick={stopScanner}
-                className="type-button w-full bg-surface border border-line text-ink rounded-full py-5 text-base shadow-[var(--shadow-card)] active:scale-95 transition-transform flex items-center justify-center gap-2"
-              >
-                Stop Scanning
-              </button>
-            )}
-            
-            <p className="type-body mt-7 text-muted">Enter code instead</p>
-            <button 
-              onClick={handleSimulateCheckIn}
-              className="mt-6 opacity-0 hover:opacity-100 focus:opacity-100 text-xs text-coffee-300 mx-auto block py-2 transition-opacity"
-            >
-              [Dev] Manual Check-in
-            </button>
-        </div>
-      </div>
-
-      <AnimatePresence>
-        {showSuccess && (
+        {scanError && (
           <motion.div 
-            initial={{ opacity: 0, y: 50, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.9 }}
-            className="fixed bottom-28 left-6 right-6 bg-coffee-800 text-white p-4 rounded-2xl shadow-lg flex items-center gap-3 z-50 border border-coffee-700"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-4 p-4 bg-red-500/10 border border-red-500/30 rounded-2xl text-red-500 text-sm text-center max-w-xs space-y-3"
           >
-            <div className="bg-accent p-2 rounded-full text-white">
-              <CheckCircle2 className="w-6 h-6" />
-            </div>
-            <div>
-              <p className="font-bold">Check-in Successful!</p>
-              <p className="text-sm text-coffee-200 opacity-90">+1 Visit, +{cafe?.pointsPerVisit || 10} Points</p>
+            <p>{scanError}</p>
+            <div className="flex gap-2 justify-center">
+              <button
+                onClick={startScanner}
+                className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 rounded-lg text-red-400 font-medium text-xs transition-colors"
+              >
+                Retry Camera
+              </button>
+              <button
+                onClick={handleManualCheckIn}
+                className="px-4 py-2 bg-zinc-700/50 hover:bg-zinc-700 rounded-lg text-zinc-300 font-medium text-xs transition-colors"
+              >
+                Manual Check-in
+              </button>
             </div>
           </motion.div>
         )}
-      </AnimatePresence>
+
+        {!scanning && (
+          <div className="mt-6 w-full space-y-3">
+            <button
+              onClick={startScanner}
+              className="w-full bg-primary text-white px-6 py-5 rounded-2xl font-bold text-lg active:scale-95 transition-transform flex items-center justify-center gap-3 shadow-lg shadow-primary/10"
+            >
+              <Camera size={24} />
+              Start Scanning
+            </button>
+
+            <button
+              onClick={handleManualCheckIn}
+              className="w-full text-zinc-500 px-6 py-3 rounded-2xl text-sm font-medium active:scale-95 transition-transform flex items-center justify-center gap-2"
+            >
+              <span className="opacity-50">Manual Check-in (Test)</span>
+            </button>
+          </div>
+        )}
+
+        {scanning && (
+          <p className="mt-4 text-xs text-zinc-500 text-center">
+            Position the QR code within the frame
+          </p>
+        )}
+      </div>
     </div>
   );
 }
