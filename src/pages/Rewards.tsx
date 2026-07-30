@@ -1,7 +1,6 @@
 //this is rewards.tsx 
 
 import { useState } from 'react';
-import { Coffee } from 'lucide-react';
 import { doc, updateDoc, arrayUnion, increment } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { useTenant } from '@/context/TenantContext';
@@ -9,6 +8,7 @@ import { Reward } from '@/types';
 import { RewardCard } from '@/components/rewards/RewardCard';
 import { FeaturedReward } from '@/components/rewards/FeaturedReward';
 import { cn } from '@/lib/utils';
+import { ProfileButton } from '@/components/ProfileButton';
 
 export function Rewards() {
   const { user, profile, cafeSlug, rewards } = useTenant();
@@ -59,9 +59,7 @@ export function Rewards() {
               Collect perks with every sip and stay.
             </p>
           </div>
-          <div className="size-11 bg-caramel shadow-[var(--shadow-card)] rounded-full flex justify-center items-center shrink-0">
-            <Coffee className="size-5 text-[oklch(0.99_0_0)] stroke-[1.5]" />
-          </div>
+          <ProfileButton />
         </div>
         
         {/* Categories (Static UI mapping) */}

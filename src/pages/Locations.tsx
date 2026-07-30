@@ -6,6 +6,8 @@ import {
   Phone,
   Star,
 } from "lucide-react";
+import { Link } from "react-router-dom";
+import { ProfileButton } from '@/components/ProfileButton';
 
 export function Locations() {
   return (
@@ -20,11 +22,14 @@ export function Locations() {
             123 Main Street, Downtown
           </div>
         </div>
+        <div className="flex items-center gap-2">
         <div className="shadow-sm rounded-full bg-white border-neutral-200 border border-solid px-3 py-2">
           <div className="text-neutral-950 text-sm leading-5 flex items-center gap-2">
             <span className="size-2 rounded-full bg-emerald-500" />
             <span>Open Now • Closes 10:00 PM</span>
           </div>
+        </div>
+        <ProfileButton />
         </div>
       </div>
       
@@ -176,6 +181,13 @@ export function Locations() {
         </div>
         <ArrowRight className="size-5 text-neutral-500" />
       </div>
+
+      <Link
+        to="/menu"
+        className="mt-5 rounded-2xl bg-[#9d5126] px-5 py-4 text-center font-semibold text-white shadow-[0_12px_24px_rgba(125,67,28,.22)] transition-transform active:scale-[0.98]"
+      >
+        View Full Menu
+      </Link>
     </div>
   );
 }

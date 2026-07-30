@@ -8,6 +8,22 @@ export interface HeroSlide {
   ctaLink?: string;
 }
 
+export interface TodaysSpecial {
+  id: string;
+  imageUrl: string;
+  badge: string;
+  title: string;
+  description: string;
+  buttonText: string;
+  buttonUrl: string;
+  days: string[];
+  isActive: boolean;
+}
+
+export interface HomeContent {
+  todaysSpecial?: TodaysSpecial[];
+}
+
 export interface Cafe {
   id: string;
   cafeName: string;
@@ -30,6 +46,7 @@ export interface Cafe {
   fontFamily?: string;
   accentGradient?: string;
   backgroundPattern?: string;
+  homeContent?: HomeContent;
 }
 
 export interface Reward {
@@ -38,6 +55,30 @@ export interface Reward {
   pointsRequired: number;
   icon: string;
   description: string;
+}
+
+export interface MenuCategory {
+  id: string;
+  name?: string;
+  title?: string;
+  isActive?: boolean;
+}
+
+export interface MenuItem {
+  id: string;
+  title?: string;
+  name?: string;
+  description?: string;
+  imageUrl?: string;
+  image?: string;
+  price?: number | string;
+  categoryId?: string;
+  category?: string;
+  isAvailable?: boolean;
+  featured?: boolean;
+  popular?: boolean;
+  zomatoUrl?: string;
+  orderUrl?: string;
 }
 
 export interface Tier {
@@ -58,6 +99,7 @@ export interface UserProfile {
   visitsHistory: Visit[];
   rewardsEarned: EarnedReward[];
   onboardingCompleted: boolean;
+  categoryPreferences?: Record<string, number>;
 }
 
 export interface Visit {

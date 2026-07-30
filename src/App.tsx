@@ -12,6 +12,9 @@ import { Rewards } from '@/pages/Rewards';
 import { Profile } from '@/pages/Profile';
 import { Login } from '@/pages/Login';
 import { Locations } from '@/pages/Locations';
+import { Menu } from '@/pages/Menu';
+import { MenuItemDetail } from '@/pages/MenuItemDetail';
+import { BrowsingTrackerProvider } from '@/hooks/useBrowsingTracker';
 import { isFirebaseConfigured } from '@/lib/firebase';
 import React, { useEffect } from 'react';
 import { getCafeSlugFromHost, isLocalHost, TenantProvider, useTenant } from '@/context/TenantContext';
@@ -60,7 +63,7 @@ function TenantAppContent() {
   }
 
   return (
-    <div className="max-w-md mx-auto min-h-screen relative bg-canvas shadow-2xl overflow-hidden">
+    <BrowsingTrackerProvider><div className="max-w-md mx-auto min-h-screen relative bg-canvas shadow-2xl overflow-hidden">
       <Routes>
         <Route path="/login" element={<Login />} />
         
@@ -75,10 +78,12 @@ function TenantAppContent() {
           <Route path="pass" element={<Pass />} />
           <Route path="rewards" element={<Rewards />} />
           <Route path="locations" element={<Locations />} />
+          <Route path="menu" element={<Menu />} />
+          <Route path="menu/:itemId" element={<MenuItemDetail />} />
           <Route path="profile" element={<Profile />} />
         </Route>
       </Routes>
-    </div>
+    </div></BrowsingTrackerProvider>
   );
 }
 

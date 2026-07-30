@@ -11,6 +11,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTenant } from '@/context/TenantContext';
 import { cn } from '@/lib/utils';
 import BorderGlow from '@/components/BorderGlow';
+import { ProfileButton } from '@/components/ProfileButton';
 
 export function Pass() {
   const navigate = useNavigate();
@@ -58,9 +59,7 @@ export function Pass() {
               Loyalty Pass
             </h1>
           </div>
-          <div className="size-12 bg-[oklch(0.28_0.05_50)] shadow-[0_8px_16px_-6px_rgba(80,50,20,0.4)] rounded-full flex justify-center items-center">
-            <Coffee className="size-5 text-[#FAF9F6] stroke-[1.5]" />
-          </div>
+          <ProfileButton />
         </div>
 
         {/* BorderGlow Card */}

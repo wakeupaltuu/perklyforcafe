@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { db, auth } from '@/lib/firebase';
 import { doc, getDoc, collection, getDocs, onSnapshot, setDoc, updateDoc } from 'firebase/firestore';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
-import { Cafe, Reward, Tier, UserProfile } from '@/types';
+import { Cafe, MenuItem, Reward, Tier, UserProfile } from '@/types';
 import { applyBranding } from '@/lib/branding';
 
 const MAIN_DOMAIN = 'cafeperkly.space';
@@ -35,6 +35,7 @@ interface TenantContextType {
   cafe: Cafe | null;
   rewards: Reward[];
   tiers: Tier[];
+  menuItems: MenuItem[];
   user: FirebaseUser | null;
   profile: UserProfile | null;
   loading: boolean;
@@ -47,6 +48,7 @@ const TenantContext = createContext<TenantContextType>({
   cafe: null,
   rewards: [],
   tiers: [],
+  menuItems: [],
   user: null,
   profile: null,
   loading: true,
@@ -59,6 +61,7 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
   const [cafe, setCafe] = useState<Cafe | null>(null);
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [tiers, setTiers] = useState<Tier[]>([]);
+  const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [user, setUser] = useState<FirebaseUser | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -68,6 +71,9 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
     if (!cafeSlug || !db) return;
 
     let unsubscribeProfile: (() => void) | undefined;
+    const unsubscribeMenu = onSnapshot(collection(db, 'cafes', cafeSlug, 'menu'), menuSnap => {
+      setMenuItems(menuSnap.docs.map(menuDoc => ({ id: menuDoc.id, ...menuDoc.data() } as MenuItem)));
+    });
 
     const loadTenant = async () => {
       setLoading(true);
@@ -143,6 +149,7 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
 
     return () => {
       unsubscribeAuth();
+      unsubscribeMenu();
       if (unsubscribeProfile) unsubscribeProfile();
     };
   }, [cafeSlug]);
@@ -161,7 +168,7 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <TenantContext.Provider value={{ cafeSlug, cafe, rewards, tiers, user, profile, loading, error, refreshProfile }}>
+    <TenantContext.Provider value={{ cafeSlug, cafe, rewards, tiers, menuItems, user, profile, loading, error, refreshProfile }}>
       {children}
     </TenantContext.Provider>
   );

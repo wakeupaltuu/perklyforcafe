@@ -6,6 +6,7 @@ import { useTenant } from '@/context/TenantContext';
 import { db } from '@/lib/firebase';
 import { doc, updateDoc, arrayUnion, increment } from 'firebase/firestore';
 import { Html5Qrcode } from 'html5-qrcode';
+import { ProfileButton } from '@/components/ProfileButton';
 
 export function Scan() {
   const { user, profile, cafe, cafeSlug } = useTenant();
@@ -227,7 +228,7 @@ export function Scan() {
           {cafe.logoUrl ? <img src={cafe.logoUrl} alt="" className="size-7 rounded-full object-cover" /> : <Coffee className="size-5" strokeWidth={1.6} />}
           <span className="type-small font-semibold">{cafe.cafeName}</span>
         </div>
-        <div className="size-10" />
+        <ProfileButton />
       </header>
 
       <div className="mx-auto mt-9 max-w-md text-center">

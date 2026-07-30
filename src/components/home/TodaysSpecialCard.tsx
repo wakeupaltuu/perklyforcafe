@@ -1,10 +1,20 @@
 'use client'
 
 import { ArrowRight } from 'lucide-react'
+import { useTenant } from '@/context/TenantContext'
 
 export function TodaysSpecialCard() {
-  const imageUrl =
-    'https://firebasestorage.googleapis.com/v0/b/perklycafe.firebasestorage.app/o/Gemini_Generated_Image_jy1n0njy1n0njy1n.png?alt=media&token=1bba3ace-2ebe-4e27-85de-ee9d4022ee69'
+  const { cafe, loading } = useTenant()
+  const homeContent = cafe?.homeContent
+
+  if (loading) return null
+
+  const today = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(new Date()).toLowerCase()
+  const special = homeContent?.todaysSpecial?.find(
+    (banner) => banner.isActive && banner.days?.some((day) => day.toLowerCase() === today),
+  )
+
+  if (!special) return null
 
   return (
     <>
@@ -15,34 +25,36 @@ export function TodaysSpecialCard() {
       >
         {/* Full-bleed background image */}
         <img
-          src={imageUrl}
-          alt="Caramel Cloud Latte"
+          src={special.imageUrl}
+          alt={special.title}
           className="absolute inset-0 w-full h-full object-cover object-center"
         />
 
         {/* Text overlay on the right empty area */}
-        <div className="absolute inset-y-0 right-0 w-[50%] flex flex-col justify-center px-4 pr-6">
-          <span className="text-[#C85A17] text-[9px] font-bold uppercase tracking-[0.15em]">
-            Limited Time
-          </span>
-          <h3
-            className="text-[#1C0F07] text-[16px] font-bold leading-tight mt-1"
-            style={{ fontFamily: 'Georgia, serif' }}
-          >
-            Caramel Cloud Latte
-          </h3>
-          <p className="text-[#5C3D28] text-[11px] mt-1 leading-relaxed max-w-[90%]">
-            Smooth caramel with a creamy twist.
-          </p>
+<div className="absolute inset-y-0 right-0 w-[50%] flex flex-col justify-center px-5 pr-7">
+  <span className="text-[#C85A17] text-[10px] font-bold uppercase tracking-[0.22em]">
+    {special.badge}
+  </span>
 
-          <button
-            className="mt-2 bg-white text-[#C85A17] text-[11px] font-semibold px-3.5 py-1.5 rounded-full flex items-center gap-1 w-fit shadow-sm hover:bg-[#fdf6ef] transition-colors"
-            onClick={() => window.open('https://www.zomato.com', '_blank')}
-          >
-            View on Zomato
-            <ArrowRight className="w-3 h-3 stroke-[2.5]" />
-          </button>
-        </div>
+  <h3
+    className="text-[#1C0F07] text-[19px] font-bold leading-[1.08] mt-2"
+    style={{ fontFamily: 'Georgia, serif' }}
+  >
+    {special.title}
+  </h3>
+
+  <p className="text-[#5C3D28] text-[13px] leading-[1.55] mt-3 max-w-[88%]">
+    {special.description}
+  </p>
+
+  <button
+    className="mt-5 bg-white text-[#C85A17] text-[12px] font-semibold px-5 py-2.5 rounded-full flex items-center gap-2 w-fit shadow-md hover:bg-[#fdf6ef] transition-colors"
+    onClick={() => window.open(special.buttonUrl, '_blank')}
+  >
+    {special.buttonText}
+    <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />
+  </button>
+</div>
       </div>
     </>
   )
