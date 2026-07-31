@@ -30,14 +30,18 @@ export function ComboCard({ title, description, rating, price, originalPrice, im
 
       {/* Content */}
       <div className="p-2.5">
-        <div className="flex items-center justify-between">
-          <h3 className="font-bold text-coffee-800 text-xs leading-tight">{title}</h3>
-          <div className="flex items-center gap-0.5">
+        <div className="flex items-start justify-between gap-1">
+          <div className="h-[30px] min-w-0 flex-1">
+            <h3 className="line-clamp-2 font-bold text-coffee-800 text-xs leading-tight">{title}</h3>
+          </div>
+          <div className="flex shrink-0 items-center gap-0.5">
             <Star className="w-2.5 h-2.5 fill-amber-400 text-amber-400" />
             <span className="text-[10px] font-bold text-coffee-700">{rating}</span>
           </div>
         </div>
-        <p className="text-[10px] text-coffee-500 mt-0.5 truncate">{description}</p>
+        <div className="mt-0.5 h-[30px]">
+          <p className="line-clamp-2 text-[10px] leading-[15px] text-coffee-500">{description}</p>
+        </div>
         <div className="flex items-center gap-1.5 mt-1.5">
           <span className="font-bold text-coffee-800 text-sm">₹{price}</span>
           <span className="text-[10px] text-coffee-400 line-through">₹{originalPrice}</span>
