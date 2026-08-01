@@ -5,7 +5,6 @@ import {
   Coffee,
   CreditCard,
   Heart,
-  Image as ImageIcon,
   MapPin,
   Navigation,
   PawPrint,
@@ -34,12 +33,6 @@ const PLACEHOLDER = {
   storyTitle: 'A place to slow down and feel at home.',
   storyBody:
     "Warm coffee, cozy seating, and good vibes. Whether you're working, reading, or catching up with friends, you'll love it here.",
-  galleryImages: [
-    'https://images.unsplash.com/photo-1509042239860-f550ce710b93?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
-    'https://images.unsplash.com/photo-1509042239860-f550ce710b93?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
-    'https://images.unsplash.com/photo-1637224671997-6dd7f74092a7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=400',
-  ],
-  photoCount: 12,
   hours: [
     { day: 'Monday - Friday', time: '8:00 AM - 10:00 PM' },
     { day: 'Saturday', time: '8:00 AM - 11:00 PM' },
@@ -197,26 +190,7 @@ export function Locations() {
           <p className="font-serif text-[15px] leading-7 text-neutral-500 max-w-[320px] mx-auto">
             {PLACEHOLDER.storyBody}
           </p>
-          <div className="grid grid-cols-3 gap-2 pt-2">
-            {PLACEHOLDER.galleryImages.map((src, i) => (
-              <div key={i} className="relative h-20 rounded-xl overflow-hidden">
-                <img
-                  alt={`${cafeName} photo ${i + 1}`}
-                  className="object-cover w-full h-full"
-                  src={optimizeImageUrl(src, 200)}
-                  loading="lazy"
-                />
-                {i === PLACEHOLDER.galleryImages.length - 1 && (
-                  <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center gap-0.5 text-white">
-                    <ImageIcon className="size-4" />
-                    <span className="text-[11px] font-medium">
-                      {PLACEHOLDER.photoCount}+ Photos
-                    </span>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+          <CustomerReviewsMarquee />
         </div>
 
         {/* Hours + Find us */}
@@ -271,8 +245,6 @@ export function Locations() {
             ))}
           </div>
         </div>
-
-        <CustomerReviewsMarquee />
 
         {/* Meet the Founder — bigger photo, serif pull-quote style */}
         <div className="rounded-3xl bg-[#f3e9dc] border border-[#e9d9c4] mt-6 p-6 flex flex-col items-center text-center gap-4">
