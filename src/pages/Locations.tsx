@@ -1,5 +1,4 @@
 import {
-  ArrowLeft,
   ArrowRight,
   BadgePercent,
   Clock,
@@ -11,20 +10,22 @@ import {
   Navigation,
   PawPrint,
   Phone,
+  Quote,
   Share2,
   Star,
   Trees,
   Wifi,
   Zap,
 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTenant } from '@/context/TenantContext';
 import { optimizeImageUrl } from '@/lib/utils';
+import { CustomerReviewsMarquee } from '@/components/ui/CustomerReviewsMarquee';
 
 // TODO: replace with real Firestore fields once the cafe-details schema
 // is finalized (address, hours, amenities, founder, gallery, etc.)
 const PLACEHOLDER = {
-  
   rating: 4.8,
   reviewCount: 127,
   isOpen: true,
@@ -51,7 +52,7 @@ const PLACEHOLDER = {
     { icon: PawPrint, label: 'Pet Friendly' },
     { icon: CreditCard, label: 'Cards Accepted' },
   ],
-  founderName: 'Ananya',
+  founderFullName: 'Ananya Sharma',
   founderQuote:
     "I started this cafe with a dream to build a space where everyone feels at home — whether you're here for a quick coffee, a long chat, or some quiet time with your thoughts.",
   founderPhotoUrl:
@@ -108,8 +109,8 @@ export function Locations() {
           </div>
         </div>
 
-        {/* Logo badge overlapping the photo's bottom edge */}
-        <div className="absolute -bottom-7 left-6 size-16 rounded-2xl bg-white shadow-[0_10px_24px_rgba(74,49,35,0.25)] p-1.5">
+        {/* Logo badge — now sits inside the hero, top-left, no overlap with content below */}
+        <div className="absolute bottom-4 left-4 size-14 rounded-2xl bg-white shadow-[0_8px_20px_rgba(0,0,0,0.25)] p-1.5">
           {logoUrl ? (
             <img
               alt={`${cafeName} logo`}
@@ -126,13 +127,10 @@ export function Locations() {
 
       <div className="px-6">
         {/* Name / category / address */}
-        <div className="pt-10 space-y-1.5">
-          <div className="flex items-center gap-2 flex-wrap">
-            <h1 className="font-semibold text-neutral-950 text-xl leading-7">
-              {cafeName}
-            </h1>
-           
-          </div>
+        <div className="pt-5 space-y-1.5">
+          <h1 className="font-semibold text-neutral-950 text-xl leading-7">
+            {cafeName}
+          </h1>
           <div className="text-neutral-500 text-sm leading-5 flex items-center gap-1.5">
             <MapPin className="size-3.5 text-[#c68642]" />
             <span>{PLACEHOLDER.address}</span>
@@ -191,15 +189,15 @@ export function Locations() {
           </button>
         </div>
 
-        {/* Story section */}
-        <div className="mt-6 space-y-3">
-          <h2 className="font-semibold text-neutral-950 text-xl leading-7">
+        {/* Story section — centered, serif, editorial feel */}
+        <div className="mt-8 space-y-3 text-center">
+          <h2 className="font-serif italic text-2xl leading-8 text-neutral-950">
             {PLACEHOLDER.storyTitle}
           </h2>
-          <p className="text-neutral-500 text-sm leading-5">
+          <p className="font-serif text-[15px] leading-7 text-neutral-500 max-w-[320px] mx-auto">
             {PLACEHOLDER.storyBody}
           </p>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2 pt-2">
             {PLACEHOLDER.galleryImages.map((src, i) => (
               <div key={i} className="relative h-20 rounded-xl overflow-hidden">
                 <img
@@ -274,26 +272,34 @@ export function Locations() {
           </div>
         </div>
 
-        {/* Meet the Founder */}
-        <div className="rounded-3xl bg-[#f3e9dc] border border-[#e9d9c4] mt-6 p-5 flex gap-4">
-          <div className="size-16 rounded-full overflow-hidden shrink-0 border-2 border-white shadow-sm">
+        <CustomerReviewsMarquee />
+
+        {/* Meet the Founder — bigger photo, serif pull-quote style */}
+        <div className="rounded-3xl bg-[#f3e9dc] border border-[#e9d9c4] mt-6 p-6 flex flex-col items-center text-center gap-4">
+          <div className="uppercase text-[#9a7a52] text-[10px] tracking-[3px] font-medium">
+            Meet the Founder
+          </div>
+
+          <div className="size-24 rounded-full overflow-hidden border-4 border-white shadow-[0_8px_20px_rgba(74,49,35,0.15)]">
             <img
-              alt={PLACEHOLDER.founderName}
+              alt={PLACEHOLDER.founderFullName}
               className="w-full h-full object-cover"
               src={PLACEHOLDER.founderPhotoUrl}
             />
           </div>
-          <div className="space-y-2">
-            <div className="uppercase text-[#9a7a52] text-[10px] tracking-[2px] font-medium">
-              Meet the Founder
-            </div>
-            <div className="font-semibold text-neutral-950 text-base leading-6">
-              Hi, I'm {PLACEHOLDER.founderName}! 👋
-            </div>
-            <p className="text-neutral-600 text-xs leading-5">
+
+          <div className="space-y-3 max-w-[320px]">
+            <Quote className="size-5 text-[#c68642] mx-auto" />
+            <p className="font-serif italic text-[17px] leading-7 text-neutral-800">
               {PLACEHOLDER.founderQuote}
             </p>
-            <button className="text-[#9d5126] text-xs font-semibold flex items-center gap-1 active:scale-95 transition-transform">
+            <div className="pt-1">
+              <div className="font-semibold text-sm text-neutral-950">
+                {PLACEHOLDER.founderFullName}
+              </div>
+              <div className="text-xs text-[#9d5126]">Founder, {cafeName}</div>
+            </div>
+            <button className="text-[#9d5126] text-xs font-semibold flex items-center gap-1 justify-center active:scale-95 transition-transform pt-1">
               Read My Story
               <ArrowRight className="size-3.5" />
             </button>
