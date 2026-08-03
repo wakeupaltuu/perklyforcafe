@@ -108,6 +108,7 @@ export interface CafeHours {
 export interface CafeLinks {
   directions: string;
   googleReviews: string;
+  instagram?: string;
 }
 
 export interface CafeDetails {
@@ -121,6 +122,7 @@ export interface CafeDetails {
   founder: Founder;
   customerReviews: CustomerReview[];
   amenities: string[];
+  galleryImages?: string[];
 }
 
 export interface Reward {
