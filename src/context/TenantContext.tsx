@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { db, auth } from '@/lib/firebase';
 import { doc, getDoc, collection, getDocs, onSnapshot, setDoc, updateDoc } from 'firebase/firestore';
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
-import { Cafe, MenuItem, Reward, Tier, UserProfile } from '@/types';
+import { Cafe, CafeDetails, MenuItem, Reward, Tier, UserProfile } from '@/types';
 import { applyBranding } from '@/lib/branding';
 
 const MAIN_DOMAIN = 'cafeperkly.space';
@@ -33,6 +33,7 @@ export const getCafeSlugFromHost = () => {
 interface TenantContextType {
   cafeSlug: string | undefined;
   cafe: Cafe | null;
+  cafeDetails: CafeDetails | null;
   rewards: Reward[];
   tiers: Tier[];
   menuItems: MenuItem[];
@@ -46,6 +47,7 @@ interface TenantContextType {
 const TenantContext = createContext<TenantContextType>({
   cafeSlug: undefined,
   cafe: null,
+  cafeDetails: null,
   rewards: [],
   tiers: [],
   menuItems: [],
@@ -59,6 +61,7 @@ const TenantContext = createContext<TenantContextType>({
 export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
   const cafeSlug = getCafeSlugFromHost();
   const [cafe, setCafe] = useState<Cafe | null>(null);
+  const [cafeDetails, setCafeDetails] = useState<CafeDetails | null>(null);
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [tiers, setTiers] = useState<Tier[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
@@ -70,7 +73,14 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (!cafeSlug || !db) return;
 
+    setCafeDetails(null);
     let unsubscribeProfile: (() => void) | undefined;
+    const unsubscribeCafeDetails = onSnapshot(doc(db, 'cafes', cafeSlug, 'details', 'info'), detailsSnap => {
+      setCafeDetails(detailsSnap.exists() ? (detailsSnap.data() as CafeDetails) : null);
+    }, error => {
+      console.error('Error loading cafe details:', error);
+      setCafeDetails(null);
+    });
     const unsubscribeMenu = onSnapshot(collection(db, 'cafes', cafeSlug, 'menu'), menuSnap => {
       setMenuItems(menuSnap.docs.map(menuDoc => ({ id: menuDoc.id, ...menuDoc.data() } as MenuItem)));
     });
@@ -150,6 +160,7 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       unsubscribeAuth();
       unsubscribeMenu();
+      unsubscribeCafeDetails();
       if (unsubscribeProfile) unsubscribeProfile();
     };
   }, [cafeSlug]);
@@ -168,7 +179,7 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <TenantContext.Provider value={{ cafeSlug, cafe, rewards, tiers, menuItems, user, profile, loading, error, refreshProfile }}>
+    <TenantContext.Provider value={{ cafeSlug, cafe, cafeDetails, rewards, tiers, menuItems, user, profile, loading, error, refreshProfile }}>
       {children}
     </TenantContext.Provider>
   );

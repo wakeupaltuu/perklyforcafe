@@ -49,6 +49,80 @@ export interface Cafe {
   homeContent?: HomeContent;
 }
 
+export interface CustomerReview {
+  id: string;
+  name: string;
+  review: string;
+  rating: number;
+  verified: boolean;
+  displayOrder: number;
+}
+
+export interface Founder {
+  name: string;
+  role: string;
+  story: string;
+  imageUrl: string;
+}
+
+export interface CafeRating {
+  value: number;
+  reviewCount: number;
+}
+
+export interface CafeLocation {
+  latitude: number;
+  longitude: number;
+  googleMapsUrl: string;
+}
+
+export interface CafeStory {
+  title: string;
+  body: string;
+}
+
+export interface CafeOffer {
+  title: string;
+  description: string;
+  buttonText: string;
+  buttonUrl: string;
+}
+
+export interface CafeContact {
+  address: string;
+  phone: string;
+  email: string;
+  website: string;
+}
+
+export interface CafeHours {
+  monday: string;
+  tuesday: string;
+  wednesday: string;
+  thursday: string;
+  friday: string;
+  saturday: string;
+  sunday: string;
+}
+
+export interface CafeLinks {
+  directions: string;
+  googleReviews: string;
+}
+
+export interface CafeDetails {
+  contact: CafeContact;
+  hours: CafeHours;
+  rating: CafeRating;
+  location: CafeLocation;
+  links: CafeLinks;
+  offer: CafeOffer;
+  story: CafeStory;
+  founder: Founder;
+  customerReviews: CustomerReview[];
+  amenities: string[];
+}
+
 export interface Reward {
   id: string;
   name: string;
