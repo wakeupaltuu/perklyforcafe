@@ -57,8 +57,8 @@ export function Locations() {
       </div>
 
       {(story?.title || story?.body) && <div className="mt-8 space-y-3 text-center">{story?.title && <h2 className="font-serif italic text-2xl leading-8 text-neutral-950">{story.title}</h2>}{story?.body && <p className="font-serif text-[15px] leading-7 text-neutral-500 max-w-[320px] mx-auto">{story.body}</p>}</div>}
-      <CafeGalleryMarquee images={cafeDetails.galleryImages || []} />
-      <CustomerReviewsMarquee reviews={reviews} rating={rating?.value} reviewCount={rating?.reviewCount} />
+      <CafeGalleryMarquee images={cafeDetails.galleryImages || []} eyebrow={cafeDetails.sectionTitles?.gallery?.eyebrow} title={cafeDetails.sectionTitles?.gallery?.title} subtitle={cafeDetails.sectionTitles?.gallery?.subtitle} />
+      <CustomerReviewsMarquee reviews={reviews} rating={rating?.value} reviewCount={rating?.reviewCount} eyebrow={cafeDetails.sectionTitles?.reviews?.eyebrow} title={cafeDetails.sectionTitles?.reviews?.title} subtitle={cafeDetails.sectionTitles?.reviews?.subtitle} />
 
       <div className="grid grid-cols-2 gap-3 mt-6">
         {hours && <div className="rounded-3xl bg-white border border-neutral-100 shadow-[0_14px_30px_rgba(74,49,35,0.06)] p-4"><div className="flex items-center gap-2 text-neutral-950 font-semibold text-sm"><Clock className="size-4 text-[#c68642]" /><span>Opening Hours</span></div><div className="mt-3 space-y-2">{weekdays.map(([key, label]) => hours[key] && <div key={key} className={`text-xs leading-4 ${key === today ? 'text-[#9d5126]' : ''}`}><div className="font-medium">{label}</div><div className="text-neutral-500">{hours[key]}</div></div>)}</div></div>}

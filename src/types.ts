@@ -111,6 +111,17 @@ export interface CafeLinks {
   instagram?: string;
 }
 
+export interface SectionTitle {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+}
+
+export interface CafeSectionTitles {
+  gallery?: SectionTitle;
+  reviews?: SectionTitle;
+}
+
 export interface CafeDetails {
   contact: CafeContact;
   hours: CafeHours;
@@ -123,6 +134,7 @@ export interface CafeDetails {
   customerReviews: CustomerReview[];
   amenities: string[];
   galleryImages?: string[];
+  sectionTitles?: CafeSectionTitles;
 }
 
 export interface Reward {
