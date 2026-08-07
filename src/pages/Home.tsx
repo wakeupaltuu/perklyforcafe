@@ -10,7 +10,7 @@ import { format } from 'date-fns';
 import { getRecommendedItems } from '@/lib/recommendations';
 
 export function Home() {
-  const { user, profile, cafeSlug, menuItems } = useTenant();
+  const { user, profile, cafe, cafeSlug, menuItems } = useTenant();
   
   const userName = profile?.name || user?.displayName || 'Coffee Lover';
   const firstName = userName.split(' ')[0];
@@ -18,6 +18,7 @@ export function Home() {
   const currentDate = format(new Date(), 'EEEE, MMMM d');
 
   const recommendations = getRecommendedItems(cafeSlug, profile, menuItems);
+  const popularItems = menuItems.filter(item => item.isPopular === true);
   return (
     <div className="app-page flex w-full flex-col overflow-x-hidden pb-32 bg-coffee-50 min-h-screen">
       <div className="overflow-y-auto flex-1">
@@ -66,23 +67,21 @@ export function Home() {
             </div>
           </div>
 
-          {/* Popular at Perkly */}
-          <div className="bg-white rounded-2xl p-4 shadow-sm">
-            <SectionHeader title="Popular at Perkly" action="See all" />
-            <div className="grid grid-cols-2 gap-3 mt-4">
-              <FeaturedDrinkCard 
-                title="Dark Mocha"
-                price="$5.20"
-                imageUrl="https://images.unsplash.com/photo-1592663527144-3afb8d150556?auto=format&fit=crop&q=80&w=400"
-                hasHeart={true}
-              />
-              <FeaturedDrinkCard 
-                title="Matcha Latte"
-                price="$4.80"
-                imageUrl="https://images.unsplash.com/photo-1781229816087-3e3d8ec90f62?auto=format&fit=crop&q=80&w=400"
-              />
+          {popularItems.length > 0 && (
+            <div className="bg-white rounded-2xl p-4 shadow-sm">
+              <SectionHeader title={`Popular at ${cafe?.cafeName || 'Cafe'}`} action="See all" />
+              <div className="grid grid-cols-2 gap-3 mt-4">
+                {popularItems.map(item => (
+                  <FeaturedDrinkCard
+                    key={item.id}
+                    title={item.title || item.name || 'Menu item'}
+                    price={typeof item.price === 'number' ? `₹${item.price.toFixed(0)}` : item.price ? (String(item.price).startsWith('₹') ? String(item.price) : `₹${item.price}`) : 'Price on request'}
+                    imageUrl={item.imageUrl || item.image || ''}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
         
         <div className="h-6" />

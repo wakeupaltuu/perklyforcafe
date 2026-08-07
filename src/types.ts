@@ -47,6 +47,9 @@ export interface Cafe {
   accentGradient?: string;
   backgroundPattern?: string;
   homeContent?: HomeContent;
+  zomatoUrl?: string;
+  /** Legacy global ordering URL retained for existing cafe documents. */
+  orderUrl?: string;
 }
 
 export interface CustomerReview {
@@ -109,6 +112,7 @@ export interface CafeLinks {
   directions: string;
   googleReviews: string;
   instagram?: string;
+  zomato?: string;
 }
 
 export interface SectionTitle {
@@ -165,6 +169,7 @@ export interface MenuItem {
   isAvailable?: boolean;
   featured?: boolean;
   popular?: boolean;
+  isPopular?: boolean;
   zomatoUrl?: string;
   orderUrl?: string;
 }
