@@ -35,6 +35,8 @@ interface TenantContextType {
   cafe: Cafe | null;
   cafeDetails: CafeDetails | null;
   rewards: Reward[];
+  rewardsLoading: boolean;
+  rewardsError: string | null;
   tiers: Tier[];
   menuItems: MenuItem[];
   user: FirebaseUser | null;
@@ -49,6 +51,8 @@ const TenantContext = createContext<TenantContextType>({
   cafe: null,
   cafeDetails: null,
   rewards: [],
+  rewardsLoading: true,
+  rewardsError: null,
   tiers: [],
   menuItems: [],
   user: null,
@@ -63,6 +67,8 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
   const [cafe, setCafe] = useState<Cafe | null>(null);
   const [cafeDetails, setCafeDetails] = useState<CafeDetails | null>(null);
   const [rewards, setRewards] = useState<Reward[]>([]);
+  const [rewardsLoading, setRewardsLoading] = useState(true);
+  const [rewardsError, setRewardsError] = useState<string | null>(null);
   const [tiers, setTiers] = useState<Tier[]>([]);
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const [user, setUser] = useState<FirebaseUser | null>(null);
@@ -74,6 +80,9 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
     if (!cafeSlug || !db) return;
 
     setCafeDetails(null);
+    setRewards([]);
+    setRewardsLoading(true);
+    setRewardsError(null);
     let unsubscribeProfile: (() => void) | undefined;
     const unsubscribeCafeDetails = onSnapshot(doc(db, 'cafes', cafeSlug, 'details', 'info'), detailsSnap => {
       setCafeDetails(detailsSnap.exists() ? (detailsSnap.data() as CafeDetails) : null);
@@ -83,6 +92,16 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
     });
     const unsubscribeMenu = onSnapshot(collection(db, 'cafes', cafeSlug, 'menu'), menuSnap => {
       setMenuItems(menuSnap.docs.map(menuDoc => ({ id: menuDoc.id, ...menuDoc.data() } as MenuItem)));
+    });
+    const unsubscribeRewards = onSnapshot(collection(db, 'cafes', cafeSlug, 'rewards'), rewardsSnap => {
+      setRewards(rewardsSnap.docs.map(rewardDoc => ({ id: rewardDoc.id, ...rewardDoc.data() } as Reward)));
+      setRewardsError(null);
+      setRewardsLoading(false);
+    }, rewardsListenerError => {
+      console.error('Error loading rewards:', rewardsListenerError);
+      setRewards([]);
+      setRewardsError("Rewards couldn't be loaded right now.");
+      setRewardsLoading(false);
     });
 
     const loadTenant = async () => {
@@ -99,10 +118,6 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
           setCafe(null);
           setError(`Cafe "${cafeSlug}" not found. Please check the URL.`);
         }
-
-        // Fetch Rewards
-        const rewardsSnap = await getDocs(collection(db, 'cafes', cafeSlug, 'rewards'));
-        setRewards(rewardsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() } as Reward)));
 
         // Fetch Tiers
         const tiersSnap = await getDocs(collection(db, 'cafes', cafeSlug, 'tiers'));
@@ -160,6 +175,7 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
     return () => {
       unsubscribeAuth();
       unsubscribeMenu();
+      unsubscribeRewards();
       unsubscribeCafeDetails();
       if (unsubscribeProfile) unsubscribeProfile();
     };
@@ -179,7 +195,7 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <TenantContext.Provider value={{ cafeSlug, cafe, cafeDetails, rewards, tiers, menuItems, user, profile, loading, error, refreshProfile }}>
+    <TenantContext.Provider value={{ cafeSlug, cafe, cafeDetails, rewards, rewardsLoading, rewardsError, tiers, menuItems, user, profile, loading, error, refreshProfile }}>
       {children}
     </TenantContext.Provider>
   );

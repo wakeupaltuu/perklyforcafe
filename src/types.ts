@@ -143,10 +143,24 @@ export interface CafeDetails {
 
 export interface Reward {
   id: string;
-  name: string;
-  pointsRequired: number;
-  icon: string;
+  title: string;
   description: string;
+  category: 'active' | 'exclusive';
+  type: 'free_item' | 'discount' | 'buy_x_get_y';
+  pointsRequired: number;
+  itemId?: string;
+  itemName?: string;
+  minOrderValue?: number;
+  validityDays?: number;
+  maxRedemptionsPerCustomer?: number;
+  imageUrl?: string;
+  badge?: string;
+  isActive: boolean;
+  createdAt?: { toMillis?: () => number } | string | number;
+  updatedAt?: { toMillis?: () => number } | string | number;
+  /** Legacy fields retained only for older customer UI components. */
+  name?: string;
+  icon?: string;
 }
 
 export interface MenuCategory {
