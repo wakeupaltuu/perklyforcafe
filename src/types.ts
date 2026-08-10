@@ -153,6 +153,12 @@ export interface Reward {
   minOrderValue?: number;
   validityDays?: number;
   maxRedemptionsPerCustomer?: number;
+  /** Promotion details supplied by the cafe's existing reward document. */
+  requirements?: Record<string, unknown>;
+  buyQuantity?: number;
+  buyItemName?: string;
+  getQuantity?: number;
+  getItemName?: string;
   imageUrl?: string;
   badge?: string;
   isActive: boolean;
@@ -161,6 +167,24 @@ export interface Reward {
   /** Legacy fields retained only for older customer UI components. */
   name?: string;
   icon?: string;
+}
+
+export type RedemptionStatus = 'pending' | 'completed' | 'expired' | 'rejected';
+
+export interface Redemption {
+  id: string;
+  userId: string;
+  rewardId: string;
+  rewardTitle: string;
+  rewardType: Reward['type'];
+  pointsRequired: number;
+  status: RedemptionStatus;
+  createdAt?: { toMillis?: () => number };
+  expiresAt?: { toMillis?: () => number };
+  redemptionCode: string;
+  requirements?: Record<string, unknown>;
+  completedAt?: { toMillis?: () => number };
+  verifiedBy?: string;
 }
 
 export interface MenuCategory {
