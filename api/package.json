@@ -4,6 +4,6 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
-    "firebase-admin": "^14.2.0"
+    "firebase-admin": "^11.11.0"
   }
 }
