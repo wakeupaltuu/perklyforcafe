@@ -51,6 +51,12 @@ export function useRewardRedemption(cafeSlug?: string, userId?: string, points =
         setRedemption({ id: active.id, ...active.data() } as Redemption);
         return;
       }
+      // If there's an expired redemption, allow creating a new one (points were never deducted)
+      const expiredCheck = await getDocs(query(redemptions, where('userId', '==', userId), where('rewardId', '==', reward.id), where('status', '==', 'expired'), limit(1)));
+      if (!expiredCheck.empty) {
+        // Expired redemption exists but wasn't used, so customer can try again
+        // Fall through to create a new redemption
+      }
       if (reward.maxRedemptionsPerCustomer !== undefined) {
         const prior = await getDocs(query(redemptions, where('userId', '==', userId), where('rewardId', '==', reward.id)));
         const completedCount = prior.docs.filter(item => item.data().status === 'completed').length;
