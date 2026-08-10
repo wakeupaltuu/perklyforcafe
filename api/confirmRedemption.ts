@@ -1,7 +1,8 @@
+//this is 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getAuth } from 'firebase-admin/auth';
 import { FieldValue, Timestamp } from 'firebase-admin/firestore';
-import { adminApp, adminDb } from './firebaseAdmin.js';
+import { adminDb } from './firebaseAdmin.js';
 
 /**
  * Staff-facing confirmation endpoint. The dashboard can call this with the
@@ -15,8 +16,8 @@ const ALLOWED_ORIGINS = [
 ];
 
 const setCorsHeaders = (res: VercelResponse, origin?: string) => {
-  // Only set Access-Control-Allow-Origin if origin is in allowed list
-  if (ALLOWED_ORIGINS.includes(origin || '')) {
+  // Only set Access-Control-Allow-Origin if origin is defined and in allowed list
+  if (origin && ALLOWED_ORIGINS.includes(origin)) {
     res.setHeader('Access-Control-Allow-Origin', origin);
   }
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -41,7 +42,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (!token || typeof cafeId !== 'string' || typeof redemptionId !== 'string') return res.status(400).json({ error: 'Missing confirmation details' });
 
   try {
-    const staff = await getAuth(adminApp).verifyIdToken(token);
+    const staff = await getAuth().verifyIdToken(token);
     // A staff identity must be explicitly scoped to the target cafe.
     const allowedCafes = Array.isArray(staff.cafeIds) ? staff.cafeIds : staff.cafeId ? [staff.cafeId] : [];
     if (!staff.staff || !allowedCafes.includes(cafeId)) return res.status(403).json({ error: 'Not authorised for this cafe' });
