@@ -7,7 +7,34 @@ import { adminApp, adminDb } from './firebaseAdmin.js';
  * Staff-facing confirmation endpoint. The dashboard can call this with the
  * staff member's Firebase ID token; the customer app never calls it.
  */
+
+// CORS configuration: Allowed origins for the dashboard
+const ALLOWED_ORIGINS = [
+  'http://localhost:3000', // Development dashboard
+  // Add production dashboard URL here when deployed
+];
+
+const setCorsHeaders = (res: VercelResponse, origin?: string) => {
+  // Only set Access-Control-Allow-Origin if origin is in allowed list
+  if (ALLOWED_ORIGINS.includes(origin || '')) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Authorization, Content-Type');
+};
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+  const origin = req.headers.origin as string | undefined;
+
+  // Handle CORS preflight request before any other logic
+  if (req.method === 'OPTIONS') {
+    setCorsHeaders(res, origin);
+    return res.status(200).end();
+  }
+
+  // Set CORS headers on all responses
+  setCorsHeaders(res, origin);
+
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
   const token = req.headers.authorization?.replace(/^Bearer\s+/i, '');
   const { cafeId, redemptionId } = req.body || {};
