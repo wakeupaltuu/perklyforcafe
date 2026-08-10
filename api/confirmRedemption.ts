@@ -25,7 +25,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       if (!redemptionSnap.exists) throw new Error('REDEMPTION_NOT_FOUND');
       const redemption = redemptionSnap.data()!;
       if (redemption.status !== 'pending') throw new Error('REDEMPTION_UNAVAILABLE');
-      if (!(redemption.expiresAt instanceof Timestamp) || redemption.expiresAt.toMillis() <= Date.now()) {
+      if (!(redemption.expiresAt instanceof Timestamp) || redemption.expiresAt.toMillis() <= Timestamp.now().toMillis()) {
         transaction.update(redemptionRef, { status: 'expired' });
         return { expired: true, pointsRequired: 0 };
       }
