@@ -122,6 +122,21 @@ export function Scan() {
             pointsEarned: cafe?.pointsPerVisit || 10
           })
         });
+
+        // ✅ NEW: Update stats in background (don't block user)
+        try {
+          await fetch('/api/updateStats', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              cafeId: cafeSlug, 
+              date: today 
+            })
+          });
+        } catch (statsError) {
+          // Stats update failure shouldn't break check-in
+          console.log('Stats update skipped:', statsError);
+        }
       }
 
       setTimeout(() => {
@@ -167,6 +182,21 @@ export function Scan() {
             pointsEarned: cafe?.pointsPerVisit || 10
           })
         });
+
+        // ✅ NEW: Update stats in background (don't block user)
+        try {
+          await fetch('/api/updateStats', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              cafeId: cafeSlug, 
+              date: today 
+            })
+          });
+        } catch (statsError) {
+          // Stats update failure shouldn't break check-in
+          console.log('Stats update skipped:', statsError);
+        }
       }
       
       setTimeout(() => {
