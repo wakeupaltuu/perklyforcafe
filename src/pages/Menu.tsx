@@ -1,11 +1,10 @@
 import { ArrowLeft, Search } from 'lucide-react';
-import { collection, onSnapshot } from 'firebase/firestore';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MenuItemCard } from '@/components/menu/MenuItemCard';
 import { ProfileButton } from '@/components/ProfileButton';
 import { useTenant } from '@/context/TenantContext';
-import { db } from '@/lib/firebase';
+import { useMenuData } from '@/hooks/useMenuData';
 import { MenuCategory, MenuItem } from '@/types';
 
 const categoryName = (category: MenuCategory) => category.name || category.title || category.id;
@@ -13,27 +12,33 @@ const title = (item: MenuItem) => item.title || item.name || '';
 
 export function Menu() {
   const navigate = useNavigate();
-  const { cafeSlug, cafe, menuItems } = useTenant();
-  const [categories, setCategories] = useState<MenuCategory[]>([]);
+  const { cafeSlug, cafe, menuItems: tenantMenuItems } = useTenant();
+  const { categories, menuItems, loading, loadingMore, hasMore, loadMore } = useMenuData(cafeSlug);
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [loading, setLoading] = useState(true);
+  const loaderRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    if (!db || !cafeSlug) return;
-    setLoading(false);
-    const unsubscribeCategories = onSnapshot(collection(db, 'cafes', cafeSlug, 'categories'), snapshot => {
-      setCategories(snapshot.docs.map(categoryDoc => ({ id: categoryDoc.id, ...categoryDoc.data() } as MenuCategory)));
-    });
-    return unsubscribeCategories;
-  }, [cafeSlug]);
+  const effectiveMenuItems = menuItems.length ? menuItems : tenantMenuItems;
 
-  const filteredItems = useMemo(() => menuItems.filter(item => item.isAvailable === true).filter(item => {
+  const filteredItems = useMemo(() => effectiveMenuItems.filter(item => item.isAvailable === true).filter(item => {
     const selectedName = categoryName(categories.find(category => category.id === selectedCategory) || { id: selectedCategory });
     const matchesCategory = selectedCategory === 'all' || item.categoryId === selectedCategory || item.category === selectedCategory || item.category === selectedName;
     const terms = `${title(item)} ${item.description || ''}`.toLowerCase();
     return matchesCategory && terms.includes(search.toLowerCase());
-  }), [categories, menuItems, search, selectedCategory]);
+  }), [categories, effectiveMenuItems, search, selectedCategory]);
+
+  useEffect(() => {
+    if (!loaderRef.current || loading || loadingMore || !hasMore) return;
+
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0]?.isIntersecting) {
+        loadMore();
+      }
+    }, { rootMargin: '200px' });
+
+    observer.observe(loaderRef.current);
+    return () => observer.disconnect();
+  }, [hasMore, loadMore, loading, loadingMore]);
 
   return <main className="min-h-screen bg-[#f7f1e8] px-5 pb-28 pt-8">
     <header className="flex items-center gap-3">
@@ -48,5 +53,6 @@ export function Menu() {
       {categories.filter(category => category.isActive !== false).map(category => <button key={category.id} onClick={() => setSelectedCategory(category.id)} className={`shrink-0 rounded-full px-4 py-2 text-sm ${selectedCategory === category.id ? 'bg-[#9d5126] text-white' : 'bg-white text-[#5c4033]'}`}>{categoryName(category)}</button>)}
     </div>
     {loading ? <div className="py-20 text-center text-neutral-500">Loading menu…</div> : filteredItems.length ? <div className="mt-5 grid grid-cols-2 gap-4">{filteredItems.map(item => <MenuItemCard key={item.id} item={item} onClick={() => navigate(`/menu/${item.id}`)} />)}</div> : <div className="py-20 text-center"><p className="font-semibold text-neutral-800">No menu items found</p><p className="mt-1 text-sm text-neutral-500">Try another category or search term.</p></div>}
+    <div ref={loaderRef} className="h-1" aria-hidden="true" />
   </main>;
 }

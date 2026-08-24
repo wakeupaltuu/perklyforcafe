@@ -2,6 +2,7 @@ import { ArrowRight, BadgePercent, Clock, Coffee, Heart, Instagram, MapPin, Navi
 import { ArrowLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTenant } from '@/context/TenantContext';
+import { useCafeDetails } from '@/hooks/useCafeDetails';
 import { optimizeImageUrl } from '@/lib/utils';
 import { CustomerReviewsMarquee } from '@/components/ui/CustomerReviewsMarquee';
 import { CafeGalleryMarquee } from '@/components/ui/CafeGalleryMarquee';
@@ -14,10 +15,11 @@ const weekdays = [
 const openExternal = (url: string) => window.open(url, '_blank', 'noopener,noreferrer');
 
 export function Locations() {
-  const { cafe, cafeDetails, loading } = useTenant();
+  const { cafe, cafeSlug, loading } = useTenant();
+  const { cafeDetails, loading: cafeDetailsLoading } = useCafeDetails(cafeSlug);
   const navigate = useNavigate();
 
-  if (loading || !cafeDetails) {
+  if (loading || cafeDetailsLoading || !cafeDetails) {
     return <div className="min-h-screen bg-[#f7f1e8] flex items-center justify-center"><span className="text-neutral-400 text-sm">Loading...</span></div>;
   }
 

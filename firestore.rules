@@ -1,0 +1,18 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin(cafeId) {
+      return signedIn() && exists(/databases/$(database)/documents/cafes/$(cafeId)/admins/$(request.auth.uid));
+    }
+
+    match /cafes/{cafeId}/tiers/{tierId} {
+      allow read: if signedIn();
+      allow create, update, delete: if isAdmin(cafeId);
+    }
+  }
+}

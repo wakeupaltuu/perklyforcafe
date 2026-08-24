@@ -65,7 +65,6 @@ const TenantContext = createContext<TenantContextType>({
 export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
   const cafeSlug = getCafeSlugFromHost();
   const [cafe, setCafe] = useState<Cafe | null>(null);
-  const [cafeDetails, setCafeDetails] = useState<CafeDetails | null>(null);
   const [rewards, setRewards] = useState<Reward[]>([]);
   const [rewardsLoading, setRewardsLoading] = useState(true);
   const [rewardsError, setRewardsError] = useState<string | null>(null);
@@ -79,30 +78,10 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     if (!cafeSlug || !db) return;
 
-    setCafeDetails(null);
     setRewards([]);
     setRewardsLoading(true);
     setRewardsError(null);
     let unsubscribeProfile: (() => void) | undefined;
-    const unsubscribeCafeDetails = onSnapshot(doc(db, 'cafes', cafeSlug, 'details', 'info'), detailsSnap => {
-      setCafeDetails(detailsSnap.exists() ? (detailsSnap.data() as CafeDetails) : null);
-    }, error => {
-      console.error('Error loading cafe details:', error);
-      setCafeDetails(null);
-    });
-    const unsubscribeMenu = onSnapshot(collection(db, 'cafes', cafeSlug, 'menu'), menuSnap => {
-      setMenuItems(menuSnap.docs.map(menuDoc => ({ id: menuDoc.id, ...menuDoc.data() } as MenuItem)));
-    });
-    const unsubscribeRewards = onSnapshot(collection(db, 'cafes', cafeSlug, 'rewards'), rewardsSnap => {
-      setRewards(rewardsSnap.docs.map(rewardDoc => ({ id: rewardDoc.id, ...rewardDoc.data() } as Reward)));
-      setRewardsError(null);
-      setRewardsLoading(false);
-    }, rewardsListenerError => {
-      console.error('Error loading rewards:', rewardsListenerError);
-      setRewards([]);
-      setRewardsError("Rewards couldn't be loaded right now.");
-      setRewardsLoading(false);
-    });
 
     const loadTenant = async () => {
       setLoading(true);
@@ -174,9 +153,6 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
 
     return () => {
       unsubscribeAuth();
-      unsubscribeMenu();
-      unsubscribeRewards();
-      unsubscribeCafeDetails();
       if (unsubscribeProfile) unsubscribeProfile();
     };
   }, [cafeSlug]);
@@ -195,7 +171,7 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <TenantContext.Provider value={{ cafeSlug, cafe, cafeDetails, rewards, rewardsLoading, rewardsError, tiers, menuItems, user, profile, loading, error, refreshProfile }}>
+    <TenantContext.Provider value={{ cafeSlug, cafe, cafeDetails: null, rewards, rewardsLoading, rewardsError, tiers, menuItems, user, profile, loading, error, refreshProfile }}>
       {children}
     </TenantContext.Provider>
   );

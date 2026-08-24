@@ -8,9 +8,11 @@ import { ComboCard } from '@/components/home/ComboCard';
 import { FeaturedDrinkCard } from '@/components/home/FeaturedDrinkCard';
 import { format } from 'date-fns';
 import { getRecommendedItems } from '@/lib/recommendations';
+import { useMenuData } from '@/hooks/useMenuData';
 
 export function Home() {
-  const { user, profile, cafe, cafeSlug, menuItems } = useTenant();
+  const { user, profile, cafe, cafeSlug } = useTenant();
+  const { menuItems } = useMenuData(cafeSlug);
   
   const userName = profile?.name || user?.displayName || 'Coffee Lover';
   const firstName = userName.split(' ')[0];

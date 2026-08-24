@@ -1,6 +1,6 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
-import { getFirestore, collection, addDoc, getDocs, query, where, orderBy } from 'firebase/firestore';
+import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, enableIndexedDbPersistence } from 'firebase/firestore';
 
 const firebaseConfig = {
   apiKey: "AIzaSyDFEm45Qne2wVe18H4okxQOctYjent8C9Y",
@@ -16,6 +16,20 @@ const firebaseConfig = {
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+try {
+  enableIndexedDbPersistence(db).catch((err) => {
+    if (err?.code === 'failed-precondition') {
+      console.warn('Firestore persistence was not enabled because multiple tabs/windows are open for this app.');
+    } else if (err?.code === 'unimplemented') {
+      console.warn('Firestore persistence is not available in this browser environment.');
+    } else {
+      console.warn('Firestore persistence could not be enabled:', err);
+    }
+  });
+} catch (err) {
+  console.warn('Firestore persistence is unavailable in this environment:', err);
+}
 
 export const isFirebaseConfigured = true;
 

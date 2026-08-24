@@ -2,6 +2,7 @@ import { Calendar, Check, ChevronRight, Coffee, Gift, Lock, Percent, Star } from
 import { useEffect, useRef, useState } from 'react';
 import { ProfileButton } from '@/components/ProfileButton';
 import { useTenant } from '@/context/TenantContext';
+import { useRewardsData } from '@/hooks/useRewardsData';
 import { Reward } from '@/types';
 import { RewardRedemptionSheet } from '@/components/rewards/RewardRedemptionSheet';
 import { useRewardRedemption } from '@/hooks/useRewardRedemption';
@@ -244,7 +245,8 @@ function ExclusiveRewardCard({ reward, points, onSelect }: { reward: Reward; poi
 }
 
 export function Rewards() {
-  const { profile, user, cafe, cafeSlug, rewards, rewardsError, rewardsLoading } = useTenant();
+  const { profile, user, cafe, cafeSlug } = useTenant();
+  const { rewards, loading: rewardsLoading, error: rewardsError } = useRewardsData(cafeSlug);
   const points = profile?.points || 0;
   const [selectedReward, setSelectedReward] = useState<Reward | null>(null);
   const { redemption, creating, error: redemptionError, createRedemption, closeRedemption } = useRewardRedemption(cafeSlug, user?.uid, points);

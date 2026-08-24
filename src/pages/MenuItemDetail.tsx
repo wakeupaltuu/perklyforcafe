@@ -1,21 +1,43 @@
 import { ArrowLeft, ExternalLink } from 'lucide-react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTenant } from '@/context/TenantContext';
+import { useCafeDetails } from '@/hooks/useCafeDetails';
+import { useMenuData } from '@/hooks/useMenuData';
 import { useBrowsingTracker } from '@/hooks/useBrowsingTracker';
+import { MenuItem } from '@/types';
 
 export function MenuItemDetail() {
   const { itemId } = useParams();
   const navigate = useNavigate();
-  const { cafe, cafeDetails, menuItems } = useTenant();
+  const { cafe, cafeSlug } = useTenant();
+  const { menuItems, loading: menuLoading, getMenuItemById } = useMenuData(cafeSlug);
+  const { cafeDetails } = useCafeDetails(cafeSlug);
   const { trackView } = useBrowsingTracker();
-  const item = menuItems.find(menuItem => menuItem.id === itemId) || null;
+  const [resolvedItem, setResolvedItem] = useState<MenuItem | null>(null);
+  const item = resolvedItem || menuItems.find(menuItem => menuItem.id === itemId) || null;
+
+  useEffect(() => {
+    if (!itemId || item) return;
+
+    let isActive = true;
+    getMenuItemById(itemId).then((nextItem) => {
+      if (isActive) {
+        setResolvedItem(nextItem);
+      }
+    });
+
+    return () => {
+      isActive = false;
+    };
+  }, [getMenuItemById, item, itemId]);
+
   useEffect(() => {
     if (!itemId || !item?.category) return;
     const timeout = window.setTimeout(() => trackView(itemId, item.category!), 2000);
     return () => window.clearTimeout(timeout);
   }, [item?.category, itemId, trackView]);
-  if (!menuItems.length) return <div className="min-h-screen bg-[#f7f1e8] pt-20 text-center text-neutral-500">Loading item…</div>;
+  if (menuLoading && !resolvedItem) return <div className="min-h-screen bg-[#f7f1e8] pt-20 text-center text-neutral-500">Loading item…</div>;
   if (!item) return <div className="min-h-screen bg-[#f7f1e8] p-6 pt-20 text-center"><p className="font-semibold">This menu item is unavailable.</p><button onClick={() => navigate('/menu')} className="mt-4 text-[#9d5126]">Back to menu</button></div>;
   const image = item.imageUrl || item.image;
   const title = item.title || item.name || 'Menu item';
