@@ -76,6 +76,7 @@ export interface CafeRating {
 export interface CafeLocation {
   latitude: number;
   longitude: number;
+  geofenceRadius?: number;
   googleMapsUrl: string;
 }
 

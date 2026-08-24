@@ -3,13 +3,45 @@ import { motion } from 'motion/react';
 import { ArrowLeft, Camera, CheckCircle2, Coffee, QrCode, ShieldCheck, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTenant } from '@/context/TenantContext';
+import { useCafeDetails } from '@/hooks/useCafeDetails';
 import { db } from '@/lib/firebase';
 import { doc, updateDoc, arrayUnion, increment } from 'firebase/firestore';
 import { Html5Qrcode } from 'html5-qrcode';
 import { ProfileButton } from '@/components/ProfileButton';
 
+const calculateDistanceMeters = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+  const toRadians = (value: number) => (value * Math.PI) / 180;
+  const earthRadiusMeters = 6371000;
+  const deltaLat = toRadians(lat2 - lat1);
+  const deltaLon = toRadians(lon2 - lon1);
+  const a =
+    Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
+    Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+    Math.sin(deltaLon / 2) * Math.sin(deltaLon / 2);
+
+  return 2 * earthRadiusMeters * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+};
+
+const getLocationErrorMessage = (error: GeolocationPositionError | Error) => {
+  if ('code' in error) {
+    switch (error.code) {
+      case error.PERMISSION_DENIED:
+        return 'Location permission is required to verify your visit.';
+      case error.POSITION_UNAVAILABLE:
+        return 'Unable to determine your location. Please try again.';
+      case error.TIMEOUT:
+        return 'Location check timed out. Please try again.';
+      default:
+        return 'Unable to determine your location. Please try again.';
+    }
+  }
+
+  return error.message || 'Unable to determine your location. Please try again.';
+};
+
 export function Scan() {
   const { user, profile, cafe, cafeSlug } = useTenant();
+  const { cafeDetails } = useCafeDetails(cafeSlug);
   const navigate = useNavigate();
   const [checkingIn, setCheckingIn] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -78,6 +110,40 @@ export function Scan() {
     setScanning(false);
   };
 
+  const verifyCafeLocation = async () => {
+    if (!navigator.geolocation) {
+      throw new Error('Location access is not supported on this device.');
+    }
+
+    if (!cafeDetails?.location?.latitude || !cafeDetails?.location?.longitude) {
+      throw new Error('Cafe location is unavailable.');
+    }
+
+    const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        resolve,
+        (error) => reject(new Error(getLocationErrorMessage(error))),
+        { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
+      );
+    });
+
+    const cafeLatitude = Number(cafeDetails.location.latitude);
+    const cafeLongitude = Number(cafeDetails.location.longitude);
+    const geofenceRadius = Number(cafeDetails.location.geofenceRadius ?? 100);
+    const distanceMeters = calculateDistanceMeters(
+      position.coords.latitude,
+      position.coords.longitude,
+      cafeLatitude,
+      cafeLongitude
+    );
+
+    if (distanceMeters > geofenceRadius) {
+      throw new Error("You're too far away from the cafe.");
+    }
+
+    return distanceMeters;
+  };
+
   const onScanSuccess = async (decodedText: string) => {
     if (scannerRef.current) {
       try {
@@ -89,6 +155,7 @@ export function Scan() {
     }
     setScanning(false);
     setCheckingIn(true);
+    setScanError(null);
 
     try {
       const data = JSON.parse(decodedText);
@@ -100,6 +167,8 @@ export function Scan() {
       if (data.cafe !== cafeSlug) {
         throw new Error(`This QR is for ${data.cafe}`);
       }
+
+      await verifyCafeLocation();
 
       const today = new Date().toISOString().split('T')[0];
       if (profile?.checkInHistory?.includes(today)) {
@@ -148,9 +217,12 @@ export function Scan() {
       setScanError(err.message || 'Invalid QR code');
       setCheckingIn(false);
       setSuccess(false);
-      setTimeout(() => {
-        startScanner();
-      }, 2000);
+
+      if (err.message === 'Invalid QR code' || err.message?.startsWith('This QR is for')) {
+        setTimeout(() => {
+          startScanner();
+        }, 2000);
+      }
     }
   };
 
@@ -319,8 +391,17 @@ export function Scan() {
           </motion.div>
         )}
 
-        {/* ✅ FIX: Show button when NOT scanning and NOT success */}
-        {!scanning && !success && (
+        {checkingIn && !success && !scanError && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mt-5 w-full rounded-2xl border border-[#d9c4a8] bg-[#fffaf4] px-4 py-3 text-center"
+          >
+            <p className="type-small text-coffee-700">Verifying you&apos;re at the cafe...</p>
+          </motion.div>
+        )}
+
+        {!scanning && !success && !checkingIn && (
           <div className="mt-6 w-full space-y-3">
             <button
               onClick={startScanner}
