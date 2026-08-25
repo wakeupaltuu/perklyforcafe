@@ -344,7 +344,7 @@ export function Scan() {
       <div className="mx-auto mt-9 flex w-full max-w-sm flex-col items-center">
         <div 
           ref={scannerContainerRef}
-          className="relative flex aspect-square w-full max-w-[310px] items-center justify-center overflow-hidden rounded-[2.25rem] border border-[#2d211b] bg-[#211712] p-3 shadow-[0_22px_45px_-19px_rgba(58,31,17,.65)]"
+          className="relative flex aspect-square w-full max-w-[310px] items-center justify-center overflow-hidden rounded-[2.25rem] border border-[var(--color-secondary-dark)] bg-[var(--color-secondary-dark)] p-3 shadow-[0_22px_45px_-19px_rgba(58,31,17,.65)]"
         >
           {scanning ? (
             <>
@@ -364,7 +364,7 @@ export function Scan() {
               </div>
               <button
                 onClick={stopScanner}
-                className="absolute bottom-5 left-1/2 z-10 -translate-x-1/2 rounded-full border border-white/15 bg-[#2f211b]/90 p-3 text-white shadow-lg backdrop-blur"
+                className="absolute bottom-5 left-1/2 z-10 -translate-x-1/2 rounded-full border border-white/15 bg-[var(--color-secondary)]/90 p-3 text-white shadow-lg backdrop-blur"
               >
                 <X size={24} />
               </button>
@@ -405,7 +405,7 @@ export function Scan() {
           <div className="mt-6 w-full space-y-3">
             <button
               onClick={startScanner}
-              className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(135deg,#78401f,#ba6b35)] px-6 py-4 text-base font-semibold text-white shadow-[0_15px_28px_-12px_rgba(116,61,28,.7)] transition-transform active:scale-[.98]"
+              className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[linear-gradient(135deg,var(--color-primary),var(--color-primary-light))] px-6 py-4 text-base font-semibold text-white shadow-[0_15px_28px_-12px_rgba(116,61,28,.7)] transition-transform active:scale-[.98]"
             >
               <Camera size={24} />
               {scanError ? 'Try camera again' : 'Start scanning'}

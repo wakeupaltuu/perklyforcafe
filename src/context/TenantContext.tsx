@@ -4,6 +4,7 @@ import { doc, getDoc, collection, getDocs, onSnapshot, setDoc, updateDoc } from 
 import { onAuthStateChanged, User as FirebaseUser } from 'firebase/auth';
 import { Cafe, CafeDetails, MenuItem, Reward, Tier, UserProfile } from '@/types';
 import { applyBranding } from '@/lib/branding';
+import { buildBrandTheme, applyBrandTheme } from '@/lib/theme';
 
 const MAIN_DOMAIN = 'cafeperkly.space';
 
@@ -160,9 +161,11 @@ export const TenantProvider = ({ children }: { children: React.ReactNode }) => {
   // Apply cafe branding to CSS variables
   useEffect(() => {
     if (cafe) {
-      document.documentElement.style.setProperty('--color-accent', cafe.primaryColor);
-      document.documentElement.style.setProperty('--color-coffee-700', cafe.secondaryColor);
+      const theme = buildBrandTheme(cafe.theme ?? null, cafe.primaryColor, cafe.secondaryColor);
+      applyBrandTheme(theme);
       applyBranding(cafe);
+    } else {
+      applyBrandTheme(buildBrandTheme());
     }
   }, [cafe]);
 

@@ -30,12 +30,12 @@ export function Pass() {
 
   // Bronze colors (static)
   const bronzeColors = {
-    bg: 'bg-[#2F221B]',
-    gradient: 'bg-[linear-gradient(135deg,oklch(0.3_0.05_50/0.9),oklch(0.2_0.03_45/0.95))]',
-    accent: 'text-[oklch(0.82_0.09_65)]',
-    accentFill: 'fill-[oklch(0.82_0.09_65)]',
+    bg: 'bg-[var(--color-secondary-dark)]',
+    gradient: 'bg-[linear-gradient(135deg,var(--color-secondary),var(--color-secondary-dark))]',
+    accent: 'text-[var(--color-primary-light)]',
+    accentFill: 'fill-[var(--color-primary-light)]',
     emptyIcon: 'text-[oklch(0.6_0.03_55)]',
-    badgeBg: 'bg-[oklch(0.62_0.1_50)]',
+    badgeBg: 'bg-[var(--color-primary)]',
     benefits: [
       { icon: Sparkles, text: 'Priority seasonal drops' },
       { icon: Cake, text: 'Birthday espresso on us' },
@@ -66,7 +66,7 @@ export function Pass() {
         <BorderGlow
           edgeSensitivity={30}
           glowColor="40 80 80"
-          backgroundColor="#2F221B"
+          backgroundColor="var(--color-secondary-dark)"
           borderRadius={32}
           glowRadius={40}
           glowIntensity={1}

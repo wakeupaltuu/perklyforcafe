@@ -49,8 +49,8 @@ export function Menu() {
       <Search className="size-5" /><input value={search} onChange={event => setSearch(event.target.value)} placeholder="Search the menu" className="w-full bg-transparent text-sm text-neutral-950 outline-none" />
     </label>
     <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
-      <button onClick={() => setSelectedCategory('all')} className={`shrink-0 rounded-full px-4 py-2 text-sm ${selectedCategory === 'all' ? 'bg-[#9d5126] text-white' : 'bg-white text-[#5c4033]'}`}>All</button>
-      {categories.filter(category => category.isActive !== false).map(category => <button key={category.id} onClick={() => setSelectedCategory(category.id)} className={`shrink-0 rounded-full px-4 py-2 text-sm ${selectedCategory === category.id ? 'bg-[#9d5126] text-white' : 'bg-white text-[#5c4033]'}`}>{categoryName(category)}</button>)}
+      <button onClick={() => setSelectedCategory('all')} className={`shrink-0 rounded-full px-4 py-2 text-sm ${selectedCategory === 'all' ? 'bg-[var(--color-primary)] text-white' : 'bg-white text-[#5c4033]'}`}>All</button>
+      {categories.filter(category => category.isActive !== false).map(category => <button key={category.id} onClick={() => setSelectedCategory(category.id)} className={`shrink-0 rounded-full px-4 py-2 text-sm ${selectedCategory === category.id ? 'bg-[var(--color-primary)] text-white' : 'bg-white text-[#5c4033]'}`}>{categoryName(category)}</button>)}
     </div>
     {loading ? <div className="py-20 text-center text-neutral-500">Loading menu…</div> : filteredItems.length ? <div className="mt-5 grid grid-cols-2 gap-4">{filteredItems.map(item => <MenuItemCard key={item.id} item={item} onClick={() => navigate(`/menu/${item.id}`)} />)}</div> : <div className="py-20 text-center"><p className="font-semibold text-neutral-800">No menu items found</p><p className="mt-1 text-sm text-neutral-500">Try another category or search term.</p></div>}
     <div ref={loaderRef} className="h-1" aria-hidden="true" />

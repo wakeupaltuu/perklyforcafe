@@ -24,12 +24,31 @@ export interface HomeContent {
   todaysSpecial?: TodaysSpecial[];
 }
 
+export interface CafeThemePalette {
+  primary?: string;
+  primaryDark?: string;
+  primaryLight?: string;
+  accent?: string;
+  background?: string;
+  surface?: string;
+  surfaceSubtle?: string;
+  text?: string;
+  textMuted?: string;
+  border?: string;
+}
+
 export interface Cafe {
   id: string;
   cafeName: string;
   primaryColor: string;
   secondaryColor: string;
-  theme: 'light' | 'dark';
+  theme?: CafeThemePalette | 'light' | 'dark';
+  themeMode?: 'light' | 'dark';
+  themeType?: 'light' | 'dark';
+  themePreset?: 'light' | 'dark';
+  themeName?: string;
+  themeValue?: CafeThemePalette;
+  themeColor?: string;
   logoUrl: string;
   heroImageUrl: string;
   welcomeMessage: string;

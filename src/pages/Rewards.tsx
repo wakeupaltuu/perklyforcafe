@@ -63,16 +63,16 @@ function PointsHeaderCard({ points, nextReward }: { points: number; nextReward: 
   const pointsToNext = nextReward ? Math.max(0, nextReward.pointsRequired - points) : 0;
 
   return (
-    <div className="rounded-3xl bg-[#3d2817] text-white p-5">
+    <div className="rounded-3xl bg-[var(--color-secondary)] text-white p-5">
       <div className="flex items-center gap-3">
         <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white/10">
-          <Coffee className="size-5 text-[#f0c38a]" />
+          <Coffee className="size-5 text-[var(--color-primary-light)]" />
         </div>
         <div>
           <div className="text-white/60 text-xs">Perkly Points</div>
           <div className="flex items-center gap-1.5 text-2xl font-bold leading-tight">
             {points}
-            <Star className="size-4 fill-[#f0c38a] text-[#f0c38a]" />
+            <Star className="size-4 fill-[var(--color-primary-light)] text-[var(--color-primary-light)]" />
           </div>
         </div>
       </div>
