@@ -1,3 +1,5 @@
+// this is manifest.ts stored in api folder
+
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { adminDb } from './firebaseAdmin.js';
 

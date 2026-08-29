@@ -28,13 +28,13 @@ export function Pass() {
   const freeDrinks = Math.floor(visits / 6);
   const nextReward = Math.max(0, 200 - (points % 200));
 
-  // Bronze colors (static)
+  // Brand dark surface colors (semantic theme)
   const bronzeColors = {
-    bg: 'bg-[var(--color-secondary-dark)]',
-    gradient: 'bg-[linear-gradient(135deg,var(--color-secondary),var(--color-secondary-dark))]',
+    bg: 'bg-[var(--color-primary-dark)]',
+    gradient: 'bg-[linear-gradient(135deg,var(--color-primary),var(--color-primary-dark))]',
     accent: 'text-[var(--color-primary-light)]',
     accentFill: 'fill-[var(--color-primary-light)]',
-    emptyIcon: 'text-[oklch(0.6_0.03_55)]',
+    emptyIcon: 'text-white/40',
     badgeBg: 'bg-[var(--color-primary)]',
     benefits: [
       { icon: Sparkles, text: 'Priority seasonal drops' },
@@ -43,19 +43,19 @@ export function Pass() {
     ]
   };
 
-  const glowColors = ['#D4A574', '#A67B5B', '#CD7F32'];
+  const glowColors = ['var(--color-primary-light)', 'var(--color-primary)', 'var(--color-primary-dark)'];
 
   return (
-    <div className="bg-[#FAF9F6] text-neutral-950 flex flex-col w-full min-h-screen overflow-x-hidden">
+    <div className="bg-[var(--color-background)] text-neutral-950 flex flex-col w-full min-h-screen overflow-x-hidden">
       <div className="flex px-6 pt-12 pb-28 flex-col flex-1 gap-6">
         
         {/* Header */}
         <div className="flex justify-between items-center">
           <div className="flex flex-col gap-1">
-            <span className="type-eyebrow text-[oklch(0.55_0.05_60)] tracking-[.2em]">
+            <span className="type-eyebrow text-[var(--color-text-muted)] tracking-[.2em]">
               {cafe?.cafeName || 'Perkly Cafe'}
             </span>
-            <h1 className="type-page-title text-[oklch(0.32_0.05_50)]">
+            <h1 className="type-page-title text-[var(--color-text)]">
               Loyalty Pass
             </h1>
           </div>
@@ -66,7 +66,7 @@ export function Pass() {
         <BorderGlow
           edgeSensitivity={30}
           glowColor="40 80 80"
-          backgroundColor="var(--color-secondary-dark)"
+          backgroundColor="var(--color-primary-dark)"
           borderRadius={32}
           glowRadius={40}
           glowIntensity={1}
@@ -90,7 +90,7 @@ export function Pass() {
               <div className="flex justify-between items-start">
                 <div className="flex items-center gap-2">
                   <div className="size-9 rounded-full flex justify-center items-center bg-white/10 backdrop-blur-sm border border-white/20">
-                    <Coffee className="size-4 text-[oklch(0.82_0.09_65)]" />
+                    <Coffee className="size-4 text-[var(--color-primary-light)]" />
                   </div>
                   <span className="type-section-title text-white tracking-[.01em]">
                     {cafe?.cafeName || 'Perkly'}
@@ -107,7 +107,7 @@ export function Pass() {
                       key={i} 
                       className={cn(
                         "size-5 transition-colors", 
-                        isFilled ? "text-[oklch(0.82_0.09_65)] fill-[oklch(0.82_0.09_65)]" : "text-[oklch(0.6_0.03_55)]"
+                        isFilled ? "text-[var(--color-primary-light)] fill-[var(--color-primary-light)]" : "text-white/40"
                       )} 
                     />
                   );
@@ -137,8 +137,8 @@ export function Pass() {
         {/* Stats Grid */}
         <div className="grid grid-cols-3 gap-3">
           <div className="bg-white shadow-[0_4px_12px_-6px_rgba(80,50,20,0.15)] rounded-3xl p-4 flex flex-col items-start gap-1 border border-neutral-100">
-            <Star className="size-4 text-[oklch(0.62_0.13_55)] mb-1" />
-            <span className="type-section-title text-[oklch(0.32_0.05_50)] text-[24px]">
+            <Star className="size-4 text-[var(--color-accent)] mb-1" />
+            <span className="type-section-title text-[var(--color-text)] text-[24px]">
               {points.toLocaleString()}
             </span>
             <span className="text-neutral-500 text-[11px] font-medium">
@@ -146,8 +146,8 @@ export function Pass() {
             </span>
           </div>
           <div className="bg-white shadow-[0_4px_12px_-6px_rgba(80,50,20,0.15)] rounded-3xl p-4 flex flex-col items-start gap-1 border border-neutral-100">
-            <Coffee className="size-4 text-[oklch(0.62_0.13_55)] mb-1" />
-            <span className="type-section-title text-[oklch(0.32_0.05_50)] text-[24px]">
+            <Coffee className="size-4 text-[var(--color-accent)] mb-1" />
+            <span className="type-section-title text-[var(--color-text)] text-[24px]">
               {freeDrinks}
             </span>
             <span className="text-neutral-500 text-[11px] font-medium">
@@ -155,8 +155,8 @@ export function Pass() {
             </span>
           </div>
           <div className="bg-white shadow-[0_4px_12px_-6px_rgba(80,50,20,0.15)] rounded-3xl p-4 flex flex-col items-start gap-1 border border-neutral-100">
-            <Gift className="size-4 text-[oklch(0.62_0.13_55)] mb-1" />
-            <span className="type-section-title text-[oklch(0.32_0.05_50)] text-[24px]">
+            <Gift className="size-4 text-[var(--color-accent)] mb-1" />
+            <span className="type-section-title text-[var(--color-text)] text-[24px]">
               {nextReward}
             </span>
             <span className="text-neutral-500 text-[11px] font-medium">
@@ -167,7 +167,7 @@ export function Pass() {
 
         {/* Benefits Section */}
         <div className="flex flex-col gap-4 mt-2">
-          <span className="type-section-title text-[oklch(0.32_0.05_50)]">
+          <span className="type-section-title text-[var(--color-text)]">
             Pass Benefits
           </span>
           <div className="flex flex-col gap-4">
@@ -176,7 +176,7 @@ export function Pass() {
               return (
                 <div key={idx} className="flex items-center gap-4">
                   <div className="size-11 bg-white shadow-sm border border-neutral-100 rounded-full flex justify-center items-center">
-                    <Icon className="size-5 text-[oklch(0.62_0.13_55)]" />
+                    <Icon className="size-5 text-[var(--color-accent)]" />
                   </div>
                   <span className="type-body text-neutral-700 font-medium">
                     {benefit.text}
@@ -189,7 +189,7 @@ export function Pass() {
 
         <button 
           onClick={() => navigate('/scan')}
-          className="type-button mt-6 bg-[#2d1c0c] shadow-[0_8px_20px_-6px_rgba(45,28,12,0.6)] rounded-full text-white w-full h-14 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
+          className="type-button mt-6 bg-[var(--color-primary-dark)] shadow-[0_8px_20px_-6px_rgba(45,28,12,0.6)] rounded-full text-white w-full h-14 flex items-center justify-center gap-2 active:scale-[0.98] transition-transform"
         >
           <Coffee className="size-5" />
           Check In

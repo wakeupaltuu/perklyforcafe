@@ -1,3 +1,5 @@
+//this is useRewardRedemption.ts, a custom React hook that manages the state and logic for redeeming rewards in a cafe application. It handles creating new redemptions, checking for existing or expired redemptions, and managing the redemption state, including error handling and real-time updates from Firestore.
+
 import { useCallback, useEffect, useState } from 'react';
 import { addDoc, collection, doc, getDocs, limit, onSnapshot, query, serverTimestamp, Timestamp, where } from 'firebase/firestore';
 import { db } from '@/lib/firebase';

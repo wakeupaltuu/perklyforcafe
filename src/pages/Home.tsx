@@ -22,7 +22,7 @@ export function Home() {
   const recommendations = getRecommendedItems(cafeSlug, profile, menuItems);
   const popularItems = menuItems.filter(item => item.isPopular === true);
   return (
-    <div className="app-page flex w-full flex-col overflow-x-hidden pb-32 bg-coffee-50 min-h-screen">
+    <div className="app-page flex w-full flex-col overflow-x-hidden pb-32 min-h-screen">
       <div className="overflow-y-auto flex-1">
         
         {/* Header */}

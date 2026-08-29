@@ -45,27 +45,27 @@ export function RewardCard({ reward, points, onRedeem, isRedeeming, imageUrl }: 
           className="object-cover w-full h-40 bg-neutral-200"
           loading="lazy"
         />
-        <button className="size-8 bg-[oklch(0.99_0_0/0.4)] backdrop-blur-md rounded-full flex absolute right-3 top-3 justify-center items-center active:scale-95 transition-transform">
+        <button className="size-8 bg-white/40 backdrop-blur-md rounded-full flex absolute right-3 top-3 justify-center items-center active:scale-95 transition-transform">
           <Heart className="size-4 text-white" />
         </button>
       </div>
       <div className="flex p-0 pt-4 flex-col gap-2">
         <div className="flex justify-between items-start gap-2">
-          <h3 className="type-card-title text-[oklch(0.28_0.03_60)] text-[17px] mt-0.5 line-clamp-2 flex-1">
+          <h3 className="type-card-title text-[var(--color-text)] text-[17px] mt-0.5 line-clamp-2 flex-1">
             {reward.name}
           </h3>
           {isUnlocked ? (
-            <span className="type-caption bg-gradient-to-r shrink-0 from-[oklch(0.85_0.06_85)] to-[oklch(0.78_0.08_70)] text-[oklch(0.3_0.03_60)] shadow-sm rounded-full flex px-3 py-1 items-center gap-1">
+            <span className="type-caption bg-gradient-to-r shrink-0 from-[var(--color-primary-light)] to-[var(--color-accent)] text-[var(--color-text)] shadow-sm rounded-full flex px-3 py-1 items-center gap-1">
               <Check className="size-3" />
               Ready
             </span>
           ) : (
-            <span className="type-caption bg-[oklch(0.93_0.02_80)] shrink-0 text-[oklch(0.5_0.04_50)] rounded-full px-3 py-1 mt-0.5">
+            <span className="type-caption bg-[var(--color-surface-subtle)] shrink-0 text-[var(--color-text-muted)] rounded-full px-3 py-1 mt-0.5">
               {pointsLeft} pts left
             </span>
           )}
         </div>
-        <p className="type-body text-[oklch(0.5_0.04_50)]">
+        <p className="type-body text-[var(--color-text-muted)]">
           {reward.description}
         </p>
         
@@ -79,13 +79,13 @@ export function RewardCard({ reward, points, onRedeem, isRedeeming, imageUrl }: 
                   className={cn(
                     "size-4 transition-colors",
                     isFilled 
-                      ? "text-[oklch(0.72_0.09_65)] fill-[oklch(0.72_0.09_65)]" 
-                      : "text-[oklch(0.85_0.02_80)]"
+                      ? "text-[var(--color-primary-light)] fill-[var(--color-primary-light)]" 
+                      : "text-[var(--color-border)]"
                   )} 
                 />
               );
             })}
-            <span className="type-caption text-[oklch(0.5_0.03_60)] ml-2">
+            <span className="type-caption text-[var(--color-text-muted)] ml-2">
               {points} / {reward.pointsRequired} pts
             </span>
           </div>

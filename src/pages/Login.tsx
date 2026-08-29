@@ -86,7 +86,7 @@ export function Login() {
     }
   };
 
-  const primaryColor = cafe?.primaryColor || '#F27D26';
+  const primaryColor = cafe?.primaryColor || 'var(--color-accent)';
 
   return (
     <div className="min-h-screen bg-black relative flex flex-col overflow-hidden">
@@ -109,7 +109,7 @@ export function Login() {
              {cafe?.logoUrl ? (
                <img src={cafe.logoUrl} alt="Logo" className="w-full h-full object-cover" />
              ) : (
-               <div className="w-4 h-5 border-2 border-coffee-800 rounded-t-full"></div>
+               <div className="w-4 h-5 border-2 border-[var(--color-primary-dark)] rounded-t-full"></div>
              )}
            </div>
            <span className="text-white text-xs font-bold tracking-widest uppercase">{cafe?.cafeName || 'Perkly Cafe'}</span>
@@ -144,14 +144,14 @@ export function Login() {
       </div>
 
       {/* Bottom Card */}
-      <div className="relative z-10 bg-coffee-50 w-full rounded-t-[32px] p-8 pb-10 flex flex-col min-h-[55vh] shadow-[0_-10px_40px_rgba(0,0,0,0.3)]">
+      <div className="relative z-10 bg-[var(--color-background)] w-full rounded-t-[32px] p-8 pb-10 flex flex-col min-h-[55vh] shadow-[0_-10px_40px_rgba(0,0,0,0.3)]">
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 w-full">
           {error && <div className="bg-red-50 text-red-600 p-3 rounded-xl text-xs font-semibold">{error}</div>}
           {message && <div className="bg-green-50 text-green-700 p-3 rounded-xl text-xs font-semibold">{message}</div>}
 
           {mode === 'signup' && (
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-coffee-400">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[var(--color-text-muted)]">
                 <UserIcon className="w-5 h-5" />
               </div>
               <input 
@@ -160,13 +160,13 @@ export function Login() {
                 value={name} 
                 onChange={e => setName(e.target.value)} 
                 required 
-                className="w-full pl-12 pr-4 py-4 rounded-3xl border border-coffee-200 bg-white focus:outline-none focus:border-coffee-300 focus:ring-4 focus:ring-coffee-100 transition-all text-sm text-coffee-800 placeholder:text-coffee-400 shadow-sm" 
+                className="w-full pl-12 pr-4 py-4 rounded-3xl border border-[var(--color-border)] bg-white focus:outline-none focus:border-[var(--color-primary-light)] focus:ring-4 focus:ring-[var(--color-primary-light)]/40 transition-all text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] shadow-sm" 
               />
             </div>
           )}
           
           <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-coffee-400">
+            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[var(--color-text-muted)]">
               <Mail className="w-5 h-5" />
             </div>
             <input 
@@ -175,13 +175,13 @@ export function Login() {
               value={email} 
               onChange={e => setEmail(e.target.value)} 
               required 
-              className="w-full pl-12 pr-4 py-4 rounded-3xl border border-coffee-200 bg-white focus:outline-none focus:border-coffee-300 focus:ring-4 focus:ring-coffee-100 transition-all text-sm text-coffee-800 placeholder:text-coffee-400 shadow-sm" 
+              className="w-full pl-12 pr-4 py-4 rounded-3xl border border-[var(--color-border)] bg-white focus:outline-none focus:border-[var(--color-primary-light)] focus:ring-4 focus:ring-[var(--color-primary-light)]/40 transition-all text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] shadow-sm" 
             />
           </div>
           
           {mode !== 'forgot' && (
             <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-coffee-400">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-[var(--color-text-muted)]">
                 <Lock className="w-5 h-5" />
               </div>
               <input 
@@ -191,12 +191,12 @@ export function Login() {
                 onChange={e => setPassword(e.target.value)} 
                 required 
                 minLength={6}
-                className="w-full pl-12 pr-12 py-4 rounded-3xl border border-coffee-200 bg-white focus:outline-none focus:border-coffee-300 focus:ring-4 focus:ring-coffee-100 transition-all text-sm text-coffee-800 placeholder:text-coffee-400 shadow-sm" 
+                className="w-full pl-12 pr-12 py-4 rounded-3xl border border-[var(--color-border)] bg-white focus:outline-none focus:border-[var(--color-primary-light)] focus:ring-4 focus:ring-[var(--color-primary-light)]/40 transition-all text-sm text-[var(--color-text)] placeholder:text-[var(--color-text-muted)] shadow-sm" 
               />
               <button 
                 type="button" 
                 onClick={() => setShowPassword(!showPassword)} 
-                className="absolute inset-y-0 right-0 pr-4 flex items-center text-coffee-400 hover:text-coffee-600"
+                className="absolute inset-y-0 right-0 pr-4 flex items-center text-[var(--color-text-muted)] hover:text-[var(--color-text)]"
               >
                 {showPassword ? <Eye className="w-5 h-5" /> : <EyeOff className="w-5 h-5" />}
               </button>
@@ -218,7 +218,7 @@ export function Login() {
             type="submit"
             disabled={isLoading}
             className="w-full text-white rounded-3xl py-4 font-bold shadow-md active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-70 mt-2"
-            style={{ backgroundColor: cafe?.secondaryColor || '#4B3621' }}
+            style={{ backgroundColor: cafe?.secondaryColor || 'var(--color-primary-dark)' }}
           >
             {isLoading ? (
               <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
@@ -235,16 +235,16 @@ export function Login() {
         {mode !== 'forgot' && (
           <>
             <div className="flex items-center gap-4 my-6">
-              <div className="flex-1 h-px bg-coffee-200"></div>
-              <span className="text-[10px] text-coffee-400 font-bold uppercase tracking-widest">Or</span>
-              <div className="flex-1 h-px bg-coffee-200"></div>
+              <div className="flex-1 h-px bg-[var(--color-border)]"></div>
+              <span className="text-[10px] text-[var(--color-text-muted)] font-bold uppercase tracking-widest">Or</span>
+              <div className="flex-1 h-px bg-[var(--color-border)]"></div>
             </div>
 
             <button 
               type="button"
               onClick={handleGoogleLogin}
               disabled={isLoading}
-              className="w-full bg-white text-coffee-800 border border-coffee-200 rounded-3xl py-4 font-bold shadow-sm active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-70 text-sm"
+              className="w-full bg-white text-[var(--color-text)] border border-[var(--color-border)] rounded-3xl py-4 font-bold shadow-sm active:scale-95 transition-all flex items-center justify-center gap-3 disabled:opacity-70 text-sm"
             >
               <svg viewBox="0 0 24 24" className="w-5 h-5" xmlns="http://www.w3.org/2000/svg">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -257,7 +257,7 @@ export function Login() {
           </>
         )}
 
-        <div className="mt-auto pt-6 text-center text-sm text-coffee-600">
+        <div className="mt-auto pt-6 text-center text-sm text-[var(--color-text-muted)]">
           {mode === 'login' ? (
             <p>Don't have an account? <button onClick={() => { setMode('signup'); setError(''); setMessage(''); }} className="font-bold hover:underline" style={{ color: primaryColor }}>Sign up</button></p>
           ) : (
@@ -265,7 +265,7 @@ export function Login() {
           )}
         </div>
         
-        <p className="text-coffee-400 text-[10px] text-center mt-4 pb-2">
+        <p className="text-[var(--color-text-muted)] text-[10px] text-center mt-4 pb-2">
           By continuing, you agree to our Terms of Service
         </p>
       </div>

@@ -119,6 +119,26 @@ export const resolveBrandColors = (primaryColor?: string | null, secondaryColor?
 const themeHasExplicitValues = (theme?: Partial<CafeThemePalette> | null) =>
   !!theme && Object.values(theme).some((value) => typeof value === 'string' && value.trim().length > 0);
 
+/**
+ * Firestore map keys can accidentally include trailing/leading whitespace
+ * (e.g. "background " instead of "background"). Normalize keys before resolve.
+ */
+const normalizeThemePaletteKeys = (
+  theme: Partial<CafeThemePalette> | Record<string, unknown>,
+): Partial<CafeThemePalette> => {
+  const normalized: Record<string, unknown> = {};
+
+  for (const [key, value] of Object.entries(theme)) {
+    const trimmedKey = key.trim();
+    if (!trimmedKey) continue;
+    // Prefer an already-correct key if both "background" and "background " exist.
+    if (normalized[trimmedKey] !== undefined && key !== trimmedKey) continue;
+    normalized[trimmedKey] = value;
+  }
+
+  return normalized as Partial<CafeThemePalette>;
+};
+
 const buildSemanticThemeFromLegacyColors = (primaryColor?: string | null, secondaryColor?: string | null) => {
   const { primary, secondary } = resolveBrandColors(primaryColor, secondaryColor);
 
@@ -143,7 +163,13 @@ export const buildBrandTheme = (
   primaryColor?: string | null,
   secondaryColor?: string | null,
 ): BrandTheme => {
-  const semanticTheme = typeof theme === 'object' && theme !== null ? theme : null;
+  console.log('🔥 THEME RECEIVED:', theme);
+  console.log(
+    '🔥 BACKGROUND RECEIVED:',
+    typeof theme === 'object' ? theme?.background : 'NO OBJECT'
+  );
+  const semanticTheme =
+    typeof theme === 'object' && theme !== null ? normalizeThemePaletteKeys(theme) : null;
   const hasSemanticTheme = themeHasExplicitValues(semanticTheme);
 
   const baseTheme = buildSemanticThemeFromLegacyColors(primaryColor, secondaryColor);

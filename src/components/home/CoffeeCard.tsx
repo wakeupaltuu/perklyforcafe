@@ -1,3 +1,5 @@
+// this is CoffeeCard.tsx stored in src/components/home folder
+
 import { Heart } from 'lucide-react';
 import { optimizeImageUrl } from '@/lib/utils';
 
@@ -22,7 +24,7 @@ export function CoffeeCard({ title, description, imageUrl }: CoffeeCardProps) {
         </button>
       </div>
       <div className="flex mt-3 flex-col gap-0.5">
-        <span className="type-card-title text-[oklch(0.3_0.04_50)]">
+        <span className="type-card-title text-[var(--color-text)]">
           {title}
         </span>
         <span className="type-caption text-neutral-500">

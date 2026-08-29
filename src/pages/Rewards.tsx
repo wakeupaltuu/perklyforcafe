@@ -19,9 +19,9 @@ const createdAtMillis = (reward: Reward) => {
 // Decorative fallback used only when reward.imageUrl is missing —
 // strong caramel/brown backgrounds so it reads as intentional artwork.
 const fallbackStyles: Record<Reward['type'], { gradient: string; Icon: typeof Coffee }> = {
-  free_item: { gradient: 'from-[#8a5a34] to-[#3d2817]', Icon: Coffee },
-  discount: { gradient: 'from-[#9d5126] to-[#4a2814]', Icon: Percent },
-  buy_x_get_y: { gradient: 'from-[#7a4f2a] to-[#3d2817]', Icon: Gift },
+  free_item: { gradient: 'from-[var(--color-primary-light)] to-[var(--color-primary-dark)]', Icon: Coffee },
+  discount: { gradient: 'from-[var(--color-primary)] to-[var(--color-primary-dark)]', Icon: Percent },
+  buy_x_get_y: { gradient: 'from-[var(--color-primary)] to-[var(--color-primary-dark)]', Icon: Gift },
 };
 
 function RewardImage({ reward, className }: { reward: Reward; className: string }) {
@@ -63,7 +63,7 @@ function PointsHeaderCard({ points, nextReward }: { points: number; nextReward: 
   const pointsToNext = nextReward ? Math.max(0, nextReward.pointsRequired - points) : 0;
 
   return (
-    <div className="rounded-3xl bg-[var(--color-secondary)] text-white p-5">
+    <div className="rounded-3xl bg-[var(--color-primary-dark)] text-white p-5">
       <div className="flex items-center gap-3">
         <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-white/10">
           <Coffee className="size-5 text-[var(--color-primary-light)]" />
@@ -130,7 +130,7 @@ function ActiveOffersCarousel({ rewards, onSelect }: { rewards: Reward[]; onSele
 
   if (rewards.length === 0) {
     return (
-      <div className="rounded-3xl bg-white/50 py-8 text-center text-[oklch(0.5_0.04_50)]">
+      <div className="rounded-3xl bg-white/50 py-8 text-center text-[var(--color-text-muted)]">
         No active offers right now.
       </div>
     );
@@ -213,13 +213,13 @@ function ExclusiveRewardCard({ reward, points, onSelect }: { reward: Reward; poi
         <h3 className="type-card-title text-ink text-[15px] leading-5 truncate">{reward.title}</h3>
 
         {reward.pointsRequired > 0 && (
-          <p className="type-caption mt-1 text-[oklch(0.5_0.04_50)]">
+          <p className="type-caption mt-1 text-[var(--color-text-muted)]">
             {reward.pointsRequired} Points
           </p>
         )}
 
         {reward.pointsRequired > 0 && !isUnlocked && (
-          <div className="mt-2 h-1 w-full rounded-full bg-[oklch(0.93_0.02_80)]">
+          <div className="mt-2 h-1 w-full rounded-full bg-[var(--color-surface-subtle)]">
             <div className="h-full rounded-full bg-caramel" style={{ width: `${progressPct}%` }} />
           </div>
         )}
@@ -232,8 +232,8 @@ function ExclusiveRewardCard({ reward, points, onSelect }: { reward: Reward; poi
             </>
           ) : (
             <>
-              <Lock className="size-3 text-[oklch(0.55_0.03_60)]" />
-              <span className="type-caption text-[oklch(0.55_0.03_60)]">
+              <Lock className="size-3 text-[var(--color-text-muted)]" />
+              <span className="type-caption text-[var(--color-text-muted)]">
                 {pointsNeeded} pts to unlock
               </span>
             </>
@@ -262,8 +262,8 @@ export function Rewards() {
 
   return <div className="app-page flex w-full flex-col overflow-x-hidden">
     <div className="page-shell flex flex-1 flex-col gap-6">
-      <div className="flex items-start justify-between"><div><h1 className="type-display-lg text-ink">Rewards</h1><p className="type-body mt-2 text-[oklch(0.5_0.03_60)]">Collect perks with every sip and stay.</p></div><ProfileButton /></div>
-      {rewardsLoading ? <RewardSkeleton /> : rewardsError ? <div className="rounded-3xl bg-white/50 py-10 text-center text-[oklch(0.5_0.04_50)]">{rewardsError}</div> : <>
+      <div className="flex items-start justify-between"><div><h1 className="type-display-lg text-ink">Rewards</h1><p className="type-body mt-2 text-[var(--color-text-muted)]">Collect perks with every sip and stay.</p></div><ProfileButton /></div>
+      {rewardsLoading ? <RewardSkeleton /> : rewardsError ? <div className="rounded-3xl bg-white/50 py-10 text-center text-[var(--color-text-muted)]">{rewardsError}</div> : <>
         <PointsHeaderCard points={points} nextReward={nextReward} />
 
         <section>
@@ -276,13 +276,13 @@ export function Rewards() {
         <section>
           <div className="mb-4">
             <h2 className="type-section-title text-ink">Exclusive Rewards</h2>
-            <p className="type-body mt-1 text-[oklch(0.5_0.04_50)]">Use your Perkly Points to unlock exclusive rewards.</p>
+            <p className="type-body mt-1 text-[var(--color-text-muted)]">Use your Perkly Points to unlock exclusive rewards.</p>
           </div>
           {exclusiveRewards.length ? (
             <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-1 -mx-1 px-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
               {exclusiveRewards.map(reward => <ExclusiveRewardCard key={reward.id} reward={reward} points={points} onSelect={setSelectedReward} />)}
             </div>
-          ) : <div className="rounded-3xl bg-white/50 py-8 text-center text-[oklch(0.5_0.04_50)]">No exclusive rewards available yet.</div>}
+          ) : <div className="rounded-3xl bg-white/50 py-8 text-center text-[var(--color-text-muted)]">No exclusive rewards available yet.</div>}
         </section>
       </>}
     </div>

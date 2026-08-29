@@ -20,7 +20,7 @@ export function Locations() {
   const navigate = useNavigate();
 
   if (loading || cafeDetailsLoading || !cafeDetails) {
-    return <div className="min-h-screen bg-[#f7f1e8] flex items-center justify-center"><span className="text-neutral-400 text-sm">Loading...</span></div>;
+    return <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center"><span className="text-neutral-400 text-sm">Loading...</span></div>;
   }
 
   const { contact, founder, hours, location, offer, rating, story } = cafeDetails;
@@ -33,7 +33,7 @@ export function Locations() {
   const quickActionCount = [location?.googleMapsUrl, contact?.phone, cafeDetails.links?.instagram, cafeDetails.links?.googleReviews, offer?.title].filter(Boolean).length;
   const quickActionColumns = quickActionCount === 3 ? 'grid-cols-3' : quickActionCount === 2 ? 'grid-cols-2' : quickActionCount === 1 ? 'grid-cols-1' : 'grid-cols-4';
 
-  return <div className="min-h-screen bg-[#f7f1e8] pb-28 overflow-x-hidden">
+  return <div className="min-h-screen bg-[var(--color-background)] pb-28 overflow-x-hidden">
     <div className="relative h-52 w-full overflow-hidden">
       <img alt={cafeName} className="object-cover w-full h-full" src={heroImage} loading="eager" />
       <div className="absolute inset-0 bg-[linear-gradient(0deg,rgba(20,12,8,.55),rgba(20,12,8,0)_45%)]" />
@@ -42,7 +42,7 @@ export function Locations() {
         <div className="flex items-center gap-2"><button className="size-9 rounded-full bg-white/90 backdrop-blur flex items-center justify-center active:scale-95 transition-transform"><Heart className="size-4 text-neutral-800" /></button><button className="size-9 rounded-full bg-white/90 backdrop-blur flex items-center justify-center active:scale-95 transition-transform"><Share2 className="size-4 text-neutral-800" /></button></div>
       </div>
       <div className="absolute bottom-4 left-4 size-14 rounded-2xl bg-white shadow-[0_8px_20px_rgba(0,0,0,0.25)] p-1.5">
-        {logoUrl ? <img alt={`${cafeName} logo`} className="w-full h-full object-cover rounded-xl" src={logoUrl} /> : <div className="w-full h-full rounded-xl bg-[#4a3123] flex items-center justify-center"><Coffee className="size-6 text-[#f0c38a]" /></div>}
+        {logoUrl ? <img alt={`${cafeName} logo`} className="w-full h-full object-cover rounded-xl" src={logoUrl} /> : <div className="w-full h-full rounded-xl bg-[var(--color-primary-dark)] flex items-center justify-center"><Coffee className="size-6 text-[var(--color-primary-light)]" /></div>}
       </div>
     </div>
 
@@ -63,12 +63,12 @@ export function Locations() {
       <CustomerReviewsMarquee reviews={reviews} rating={rating?.value} reviewCount={rating?.reviewCount} eyebrow={cafeDetails.sectionTitles?.reviews?.eyebrow} title={cafeDetails.sectionTitles?.reviews?.title} subtitle={cafeDetails.sectionTitles?.reviews?.subtitle} />
 
       <div className="grid grid-cols-2 gap-3 mt-6">
-        {hours && <div className="rounded-3xl bg-white border border-neutral-100 shadow-[0_14px_30px_rgba(74,49,35,0.06)] p-4"><div className="flex items-center gap-2 text-neutral-950 font-semibold text-sm"><Clock className="size-4 text-[#c68642]" /><span>Opening Hours</span></div><div className="mt-3 space-y-2">{weekdays.map(([key, label]) => hours[key] && <div key={key} className={`text-xs leading-4 ${key === today ? 'text-[#9d5126]' : ''}`}><div className="font-medium">{label}</div><div className="text-neutral-500">{hours[key]}</div></div>)}</div></div>}
-        {contact?.address && <div className="rounded-3xl bg-white border border-neutral-100 shadow-[0_14px_30px_rgba(74,49,35,0.06)] p-4 flex flex-col"><div className="flex items-center gap-2 text-neutral-950 font-semibold text-sm"><MapPin className="size-4 text-[#c68642]" /><span>Find Us</span></div><div className="mt-3 h-20 rounded-xl bg-[#ece3d6] flex items-center justify-center"><MapPin className="size-6 text-[#9d5126]" /></div><div className="text-xs text-neutral-500 mt-3 leading-4">{contact.address}</div>{location?.googleMapsUrl && <button onClick={() => openExternal(location.googleMapsUrl)} className="mt-3 rounded-full bg-[#f7ede2] text-[#8a5a34] text-xs font-medium py-2 flex items-center justify-center gap-1.5 active:scale-95 transition-transform"><Navigation className="size-3.5" />Get Directions</button>}</div>}
+        {hours && <div className="rounded-3xl bg-white border border-neutral-100 shadow-[0_14px_30px_rgba(74,49,35,0.06)] p-4"><div className="flex items-center gap-2 text-neutral-950 font-semibold text-sm"><Clock className="size-4 text-[var(--color-accent)]" /><span>Opening Hours</span></div><div className="mt-3 space-y-2">{weekdays.map(([key, label]) => hours[key] && <div key={key} className={`text-xs leading-4 ${key === today ? 'text-[var(--color-primary)]' : ''}`}><div className="font-medium">{label}</div><div className="text-neutral-500">{hours[key]}</div></div>)}</div></div>}
+        {contact?.address && <div className="rounded-3xl bg-white border border-neutral-100 shadow-[0_14px_30px_rgba(74,49,35,0.06)] p-4 flex flex-col"><div className="flex items-center gap-2 text-neutral-950 font-semibold text-sm"><MapPin className="size-4 text-[var(--color-accent)]" /><span>Find Us</span></div><div className="mt-3 h-20 rounded-xl bg-[var(--color-surface-subtle)] flex items-center justify-center"><MapPin className="size-6 text-[var(--color-primary)]" /></div><div className="text-xs text-neutral-500 mt-3 leading-4">{contact.address}</div>{location?.googleMapsUrl && <button onClick={() => openExternal(location.googleMapsUrl)} className="mt-3 rounded-full bg-[var(--color-surface-subtle)] text-[var(--color-primary-dark)] text-xs font-medium py-2 flex items-center justify-center gap-1.5 active:scale-95 transition-transform"><Navigation className="size-3.5" />Get Directions</button>}</div>}
       </div>
 
-      {hasFounder && <div className="rounded-3xl bg-[#f3e9dc] border border-[#e9d9c4] mt-6 p-6 flex flex-col items-center text-center gap-4"><div className="uppercase text-[#9a7a52] text-[10px] tracking-[3px] font-medium">Meet the Founder</div>{founder.imageUrl && <div className="size-24 rounded-full overflow-hidden border-4 border-white shadow-[0_8px_20px_rgba(74,49,35,0.15)]"><img alt={founder.name} className="w-full h-full object-cover" src={founder.imageUrl} /></div>}<div className="space-y-3 max-w-[320px]">{founder.story && <><Quote className="size-5 text-[#c68642] mx-auto" /><p className="font-serif italic text-[17px] leading-7 text-neutral-800">{founder.story}</p></>}<div className="pt-1">{founder.name && <div className="font-semibold text-sm text-neutral-950">{founder.name}</div>}{founder.role && <div className="text-xs text-[#9d5126]">{founder.role}</div>}</div>{founder.story && <button className="text-[#9d5126] text-xs font-semibold flex items-center gap-1 justify-center active:scale-95 transition-transform pt-1">Read My Story<ArrowRight className="size-3.5" /></button>}</div></div>}
-      <Link to="/menu" className="mt-6 rounded-2xl bg-[#9d5126] px-5 py-4 text-center font-semibold text-white shadow-[0_12px_24px_rgba(125,67,28,.22)] transition-transform active:scale-[0.98] flex items-center justify-center">View Full Menu</Link>
+      {hasFounder && <div className="rounded-3xl bg-[var(--color-surface-subtle)] border border-[var(--color-border)] mt-6 p-6 flex flex-col items-center text-center gap-4"><div className="uppercase text-[var(--color-primary)] text-[10px] tracking-[3px] font-medium">Meet the Founder</div>{founder.imageUrl && <div className="size-24 rounded-full overflow-hidden border-4 border-white shadow-[0_8px_20px_rgba(74,49,35,0.15)]"><img alt={founder.name} className="w-full h-full object-cover" src={founder.imageUrl} /></div>}<div className="space-y-3 max-w-[320px]">{founder.story && <><Quote className="size-5 text-[var(--color-accent)] mx-auto" /><p className="font-serif italic text-[17px] leading-7 text-neutral-800">{founder.story}</p></>}<div className="pt-1">{founder.name && <div className="font-semibold text-sm text-neutral-950">{founder.name}</div>}{founder.role && <div className="text-xs text-[var(--color-primary)]">{founder.role}</div>}</div>{founder.story && <button className="text-[var(--color-primary)] text-xs font-semibold flex items-center gap-1 justify-center active:scale-95 transition-transform pt-1">Read My Story<ArrowRight className="size-3.5" /></button>}</div></div>}
+      <Link to="/menu" className="mt-6 rounded-2xl bg-[var(--color-primary)] px-5 py-4 text-center font-semibold text-white shadow-[0_12px_24px_rgba(125,67,28,.22)] transition-transform active:scale-[0.98] flex items-center justify-center">View Full Menu</Link>
     </div>
   </div>;
 }

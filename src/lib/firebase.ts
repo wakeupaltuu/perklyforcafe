@@ -1,3 +1,5 @@
+//this is firebase.ts file that initializes firebase and exports the auth and db instances for use in other parts of the application
+
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { getFirestore, collection, addDoc, getDocs, query, where, orderBy, enableIndexedDbPersistence } from 'firebase/firestore';

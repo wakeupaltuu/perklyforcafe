@@ -1,3 +1,5 @@
+// this is BrewPassCard.tsx stored in src/components/home folder
+
 import { Crown, Coffee } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTenant } from '@/context/TenantContext';
@@ -12,7 +14,7 @@ export function BrewPassCard() {
   return (
     <div className="px-5 pt-6 sm:px-6">
       <Link to="/pass" className="block active:scale-[0.98] transition-transform">
-        <div className="relative bg-[#2F221B] bg-[linear-gradient(135deg,oklch(0.3_0.05_50/0.9),oklch(0.2_0.03_45/0.95))] shadow-[var(--shadow-float)] rounded-[var(--radius-card)] p-6 overflow-hidden border border-white/10">
+        <div className="relative bg-[var(--color-primary-dark)] bg-[linear-gradient(135deg,var(--color-primary)_0%,var(--color-primary-dark)_100%)] shadow-[var(--shadow-float)] rounded-[var(--radius-card)] p-6 overflow-hidden border border-white/10">
           <div className="size-40 rounded-full bg-white/5 absolute -right-8 -top-10" />
           <div className="size-24 rounded-full bg-white/5 absolute right-10 bottom-2" />
           
@@ -33,7 +35,7 @@ export function BrewPassCard() {
               <span className="type-small text-white/70">
                 {TOTAL_STAMPS - currentProgress} more to a free coffee
               </span>
-              <span className="type-small text-[oklch(0.82_0.09_65)]">
+              <span className="type-small text-[var(--color-primary-light)]">
                 {currentProgress} / {TOTAL_STAMPS}
               </span>
             </div>
@@ -45,7 +47,7 @@ export function BrewPassCard() {
                     key={i} 
                     className={cn(
                       "size-6", 
-                      isStamped ? "text-[oklch(0.82_0.09_65)]" : "text-[oklch(0.6_0.03_55)]"
+                      isStamped ? "text-[var(--color-primary-light)]" : "text-white/40"
                     )} 
                   />
                 );

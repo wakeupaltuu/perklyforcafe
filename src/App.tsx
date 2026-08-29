@@ -23,7 +23,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { user, loading } = useTenant();
   
   if (loading) {
-    return <div className="min-h-screen bg-coffee-50 flex items-center justify-center">Loading...</div>;
+    return <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center">Loading...</div>;
   }
   
   if (!user) {
@@ -35,15 +35,15 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 function CafeNotFound() {
   const { error } = useTenant();
   return (
-    <div className="min-h-screen bg-coffee-50 flex flex-col items-center justify-center p-6 text-center">
-      <div className="w-20 h-20 bg-coffee-200 rounded-full flex items-center justify-center mb-6">
+    <div className="min-h-screen bg-[var(--color-background)] flex flex-col items-center justify-center p-6 text-center">
+      <div className="w-20 h-20 bg-[var(--color-surface-subtle)] rounded-full flex items-center justify-center mb-6">
         <span className="text-4xl">☕</span>
       </div>
-      <h1 className="type-page-title text-coffee-800 mb-3">Cafe Not Found</h1>
-      <p className="type-body text-coffee-600 mb-8 max-w-xs">{error}</p>
+      <h1 className="type-page-title text-[var(--color-text)] mb-3">Cafe Not Found</h1>
+      <p className="type-body text-[var(--color-text-muted)] mb-8 max-w-xs">{error}</p>
       <a 
         href="/"
-        className="type-button bg-coffee-700 text-white px-8 py-3 rounded-full shadow-sm hover:bg-coffee-800 transition-colors"
+        className="type-button bg-[var(--color-primary-dark)] text-white px-8 py-3 rounded-full shadow-sm hover:bg-[var(--color-primary)] transition-colors"
       >
         Return Home
       </a>
@@ -55,7 +55,7 @@ function TenantAppContent() {
   const { error, loading } = useTenant();
   
   if (loading) {
-    return <div className="min-h-screen bg-coffee-50 flex items-center justify-center text-coffee-600 font-medium">Loading...</div>;
+    return <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center text-[var(--color-text-muted)] font-medium">Loading...</div>;
   }
 
   if (error) {

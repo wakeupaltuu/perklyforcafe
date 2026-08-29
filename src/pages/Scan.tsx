@@ -291,7 +291,7 @@ export function Scan() {
   // Success state
   if (success) {
     return (
-      <div className="p-6 h-screen flex flex-col items-center justify-center pt-12 bg-coffee-50">
+      <div className="p-6 h-screen flex flex-col items-center justify-center pt-12 bg-[var(--color-background)]">
         <motion.div 
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -301,11 +301,11 @@ export function Scan() {
             <CheckCircle2 size={64} className="text-green-500" />
           </div>
           <div>
-            <h3 className="text-3xl font-bold text-coffee-800">Checked In! ✅</h3>
-            <p className="text-coffee-500 mt-2">
+            <h3 className="text-3xl font-bold text-[var(--color-text)]">Checked In! ✅</h3>
+            <p className="text-[var(--color-text-muted)] mt-2">
               +{cafe?.pointsPerVisit || 10} Points Earned
             </p>
-            <p className="text-sm text-coffee-400 mt-1">
+            <p className="text-sm text-[var(--color-text-muted)] mt-1">
               {profile?.visits || 0} total visits
             </p>
           </div>
@@ -326,7 +326,7 @@ export function Scan() {
         <button onClick={navigateToHome} aria-label="Back to home" className="icon-button size-10">
           <ArrowLeft className="size-5" strokeWidth={1.6} />
         </button>
-        <div className="flex items-center gap-2 text-coffee-700">
+        <div className="flex items-center gap-2 text-[var(--color-primary-dark)]">
           {cafe.logoUrl ? <img src={cafe.logoUrl} alt="" className="size-7 rounded-full object-cover" /> : <Coffee className="size-5" strokeWidth={1.6} />}
           <span className="type-small font-semibold">{cafe.cafeName}</span>
         </div>
@@ -335,7 +335,7 @@ export function Scan() {
 
       <div className="mx-auto mt-9 max-w-md text-center">
         <span className="eyebrow">Loyalty check-in</span>
-        <h1 className="type-display-lg mt-2 text-coffee-800">Scan to earn</h1>
+        <h1 className="type-display-lg mt-2 text-[var(--color-text)]">Scan to earn</h1>
         <p className="type-body mt-3 text-muted">
           {scanning ? 'Point camera at QR code' : 'Scan at the counter to earn points'}
         </p>
@@ -344,37 +344,37 @@ export function Scan() {
       <div className="mx-auto mt-9 flex w-full max-w-sm flex-col items-center">
         <div 
           ref={scannerContainerRef}
-          className="relative flex aspect-square w-full max-w-[310px] items-center justify-center overflow-hidden rounded-[2.25rem] border border-[var(--color-secondary-dark)] bg-[var(--color-secondary-dark)] p-3 shadow-[0_22px_45px_-19px_rgba(58,31,17,.65)]"
+          className="relative flex aspect-square w-full max-w-[310px] items-center justify-center overflow-hidden rounded-[2.25rem] border border-[var(--color-primary-dark)] bg-[var(--color-primary-dark)] p-3 shadow-[0_22px_45px_-19px_rgba(58,31,17,.65)]"
         >
           {scanning ? (
             <>
               <div id="qr-reader" className="h-full w-full overflow-hidden rounded-[1.7rem]" />
               <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute inset-7 rounded-[1.35rem] border border-white/20" />
-                <div className="absolute left-7 top-7 size-9 rounded-tl-xl border-l-[3px] border-t-[3px] border-[#e6a36e]" />
-                <div className="absolute right-7 top-7 size-9 rounded-tr-xl border-r-[3px] border-t-[3px] border-[#e6a36e]" />
-                <div className="absolute bottom-7 left-7 size-9 rounded-bl-xl border-b-[3px] border-l-[3px] border-[#e6a36e]" />
-                <div className="absolute bottom-7 right-7 size-9 rounded-br-xl border-b-[3px] border-r-[3px] border-[#e6a36e]" />
+                <div className="absolute left-7 top-7 size-9 rounded-tl-xl border-l-[3px] border-t-[3px] border-[var(--color-primary-light)]" />
+                <div className="absolute right-7 top-7 size-9 rounded-tr-xl border-r-[3px] border-t-[3px] border-[var(--color-primary-light)]" />
+                <div className="absolute bottom-7 left-7 size-9 rounded-bl-xl border-b-[3px] border-l-[3px] border-[var(--color-primary-light)]" />
+                <div className="absolute bottom-7 right-7 size-9 rounded-br-xl border-b-[3px] border-r-[3px] border-[var(--color-primary-light)]" />
                 <motion.div 
                   initial={{ top: '15%' }}
                   animate={{ top: '85%' }}
                   transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-                  className="absolute left-10 right-10 h-px bg-[#f5bc8c] shadow-[0_0_18px_2px_rgba(235,154,95,.85)]"
+                  className="absolute left-10 right-10 h-px bg-[var(--color-accent)] shadow-[0_0_18px_2px_rgba(0,0,0,0.12)]"
                 />
               </div>
               <button
                 onClick={stopScanner}
-                className="absolute bottom-5 left-1/2 z-10 -translate-x-1/2 rounded-full border border-white/15 bg-[var(--color-secondary)]/90 p-3 text-white shadow-lg backdrop-blur"
+                className="absolute bottom-5 left-1/2 z-10 -translate-x-1/2 rounded-full border border-white/15 bg-[var(--color-primary)]/90 p-3 text-white shadow-lg backdrop-blur"
               >
                 <X size={24} />
               </button>
             </>
           ) : (
             <div className="flex flex-col items-center gap-4 px-6 text-center">
-              <div className="flex size-20 items-center justify-center rounded-[1.35rem] border border-[#4d372b] bg-[#2b1d17]">
-                <QrCode size={42} className="text-[#dda06e]" strokeWidth={1.35} />
+              <div className="flex size-20 items-center justify-center rounded-[1.35rem] border border-[var(--color-primary)] bg-[var(--color-primary-dark)]">
+                <QrCode size={42} className="text-[var(--color-primary-light)]" strokeWidth={1.35} />
               </div>
-              <p className="type-small max-w-52 text-[#c4ada0]">
+              <p className="type-small max-w-52 text-[var(--color-text-muted)]">
                 Your camera will open securely when you’re ready.
               </p>
             </div>
@@ -395,9 +395,9 @@ export function Scan() {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mt-5 w-full rounded-2xl border border-[#d9c4a8] bg-[#fffaf4] px-4 py-3 text-center"
+            className="mt-5 w-full rounded-2xl border border-[var(--color-border)] bg-[var(--color-surface-subtle)] px-4 py-3 text-center"
           >
-            <p className="type-small text-coffee-700">Verifying you&apos;re at the cafe...</p>
+            <p className="type-small text-[var(--color-primary-dark)]">Verifying you&apos;re at the cafe...</p>
           </motion.div>
         )}
 
@@ -413,7 +413,7 @@ export function Scan() {
 
             <button
               onClick={handleManualCheckIn}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl px-6 py-2 text-sm font-medium text-coffee-400 transition-transform active:scale-[.98]"
+              className="flex w-full items-center justify-center gap-2 rounded-2xl px-6 py-2 text-sm font-medium text-[var(--color-text-muted)] transition-transform active:scale-[.98]"
             >
               <span className="opacity-60">Manual check-in (test)</span>
             </button>
@@ -421,7 +421,7 @@ export function Scan() {
         )}
 
         {scanning && (
-          <div className="mt-5 flex items-center gap-2 text-coffee-500">
+          <div className="mt-5 flex items-center gap-2 text-[var(--color-text-muted)]">
             <ShieldCheck className="size-4" strokeWidth={1.5} />
             <p className="type-caption">Position the QR code within the frame</p>
           </div>

@@ -1,7 +1,8 @@
+//this is firebaseAdmin.ts stored in api folder
 import { cert, getApps, initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 
-export const adminApp =
+const app =
   getApps()[0] ??
   initializeApp({
     credential: cert({
@@ -11,4 +12,4 @@ export const adminApp =
     }),
   });
 
-export const adminDb = getFirestore(adminApp);
+export const adminDb = getFirestore(app);

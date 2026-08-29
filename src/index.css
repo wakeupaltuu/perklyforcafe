@@ -2,25 +2,27 @@
 @import "tailwindcss";
 
 :root {
-  --color-primary: #9d5126;
-  --color-primary-dark: #3d2817;
-  --color-primary-light: #d77b39;
-  --color-secondary: #4B3621;
-  --color-secondary-dark: #2F221B;
-  --color-accent: #F27D26;
+  /* DEFAULT FALLBACKS — these are overridden by Firestore theme */
+  --color-primary: #2563EB;
+  --color-primary-dark: #172554;
+  --color-primary-light: #DBEAFE;
+  --color-secondary: #2563EB;
+  --color-secondary-dark: #172554;
+  --color-accent: #3B82F6;
 
-  --color-background: #f8f5f0;
-  --color-surface: #fffdf9;
-  --color-surface-subtle: #f5f2ed;
-  --color-text: #34231a;
-  --color-text-muted: #796b60;
+  --color-background: #F7FAFF;
+  --color-surface: #FFFFFF;
+  --color-surface-subtle: #EFF6FF;
+  --color-text: #111827;
+  --color-text-muted: #6B7280;
   --color-text-inverse: #ffffff;
-  --color-border: #e9e1d8;
+  --color-border: #DBEAFE;
 
   --color-success: #16a34a;
   --color-error: #dc2626;
   --color-warning: #f59e0b;
 
+  /* Legacy coffee tokens — kept for fallback but NOT used in components */
   --color-coffee-50: #FDFCF9;
   --color-coffee-100: #F5F2ED;
   --color-coffee-200: #EBE6E0;
@@ -37,7 +39,7 @@
   --color-muted: var(--color-text-muted);
   --color-canvas: var(--color-background);
   --color-line: var(--color-border);
-  --color-caramel: var(--color-primary-light);
+  --color-caramel: var(--color-primary);
   --shadow-card: 0 12px 32px -18px rgba(68, 42, 23, .28);
   --shadow-float: 0 20px 45px -22px rgba(54, 31, 15, .44);
   --radius-card: 1.5rem;
@@ -56,8 +58,8 @@ body {
 }
 
 body ::selection {
-  background-color: var(--color-coffee-200);
-  color: var(--color-coffee-900);
+  background-color: var(--color-surface-subtle);
+  color: var(--color-text);
 }
 
 button, a { -webkit-tap-highlight-color: transparent; }
@@ -84,7 +86,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
     border-radius: 9999px;
     border: 1px solid var(--color-border);
     background-color: var(--color-surface);
-    color: var(--color-coffee-700);
+    color: var(--color-text);
     box-shadow: var(--shadow-card);
     transition: transform 150ms ease;
   }
@@ -94,7 +96,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
     align-items: center;
     justify-content: center;
     border-radius: 9999px;
-    background-color: var(--color-coffee-800);
+    background-color: var(--color-primary-dark);
     padding: 0.625rem 1.25rem;
     font-size: 0.875rem;
     font-weight: 600;

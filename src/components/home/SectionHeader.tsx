@@ -9,7 +9,7 @@ export function SectionHeader({
 }: SectionHeaderProps) {
   return (
     <div className="mb-4 flex items-center justify-between">
-      <h2 className="font-sans text-[22px] font-semibold leading-tight tracking-[-0.03em] text-coffee-900">
+      <h2 className="font-sans text-[22px] font-semibold leading-tight tracking-[-0.03em] text-[var(--color-text)]">
         {title}
       </h2>
 
@@ -20,7 +20,7 @@ export function SectionHeader({
             font-medium
             text-caramel
             transition-colors
-            hover:text-coffee-900
+            hover:text-[var(--color-text)]
           "
         >
           {action}
