@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { Menu } from 'lucide-react';
 import { useTenant } from '@/context/TenantContext';
 import { ProfileButton } from '@/components/ProfileButton';
 import { HeroBanner } from '@/components/home/HeroBanner';
@@ -6,18 +8,42 @@ import { SectionHeader } from '@/components/home/SectionHeader';
 import { TodaysSpecialCard } from '@/components/home/TodaysSpecialCard';
 import { ComboCard } from '@/components/home/ComboCard';
 import { FeaturedDrinkCard } from '@/components/home/FeaturedDrinkCard';
-import { format } from 'date-fns';
 import { getRecommendedItems } from '@/lib/recommendations';
 import { useMenuData } from '@/hooks/useMenuData';
 
-export function Home() {
-  const { user, profile, cafe, cafeSlug } = useTenant();
-  const { menuItems } = useMenuData(cafeSlug);
-  
-  const userName = profile?.name || user?.displayName || 'Coffee Lover';
-  const firstName = userName.split(' ')[0];
+function HomeHeader() {
+  const { cafe } = useTenant();
+  const [failedLogoUrls, setFailedLogoUrls] = useState<string[]>([]);
+  const cafeName = cafe?.cafeName || 'Perkly';
+  const logoUrls = [cafe?.headerLogoUrl?.trim(), cafe?.logoUrl?.trim()]
+    .filter((url): url is string => Boolean(url))
+    .filter((url, index, urls) => urls.indexOf(url) === index);
+  const logoUrl = logoUrls.find(url => !failedLogoUrls.includes(url));
 
-  const currentDate = format(new Date(), 'EEEE, MMMM d');
+  return (
+    <header className="border-b border-[var(--color-border)] bg-[var(--color-surface)] px-4 py-2 sm:px-6">
+      <div className="relative flex h-10 items-center justify-between">
+        <button type="button" disabled aria-label="Menu" className="relative z-10 flex size-11 items-center justify-center text-[var(--color-text)] disabled:opacity-100">
+          <Menu className="size-[22px] stroke-[1.5]" />
+        </button>
+
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-12 text-center">
+          {logoUrl ? (
+            <img src={logoUrl} alt={cafeName} onError={() => setFailedLogoUrls(urls => [...urls, logoUrl])} className="h-9 max-w-[145px] object-contain" />
+          ) : (
+            <p className="max-w-full truncate font-sans text-xs font-semibold uppercase tracking-[0.12em] text-[var(--color-text)]">{cafeName}</p>
+          )}
+        </div>
+
+        <ProfileButton iconOnly className="relative z-10 size-11 rounded-none border-transparent bg-transparent text-[var(--color-text)] shadow-none [&>svg]:size-[22px]" />
+      </div>
+    </header>
+  );
+}
+
+export function Home() {
+  const { profile, cafe, cafeSlug } = useTenant();
+  const { menuItems } = useMenuData(cafeSlug);
 
   const recommendations = getRecommendedItems(cafeSlug, profile, menuItems);
   const popularItems = menuItems.filter(item => item.isPopular === true);
@@ -25,18 +51,7 @@ export function Home() {
     <div className="app-page flex w-full flex-col overflow-x-hidden pb-32 min-h-screen">
       <div className="overflow-y-auto flex-1">
         
-        {/* Header */}
-        <div className="flex px-4 pt-10 pb-4 justify-between items-start">
-          <div className="flex flex-col gap-1">
-            <span className="type-eyebrow text-muted tracking-[0.12em]">
-              {currentDate}
-            </span>
-            <h1 className="type-page-title text-ink">
-              Good morning, {firstName}
-            </h1>
-          </div>
-          <ProfileButton />
-        </div>
+        <HomeHeader />
 
         {/* Hero Section */}
         <HeroBanner />

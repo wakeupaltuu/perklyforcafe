@@ -50,6 +50,8 @@ export interface Cafe {
   themeValue?: CafeThemePalette;
   themeColor?: string;
   logoUrl: string;
+  /** Optional tenant-provided logo used specifically in the customer Home header. */
+  headerLogoUrl?: string;
   heroImageUrl: string;
   welcomeMessage: string;
   pointsPerVisit: number;
